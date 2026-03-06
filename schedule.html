@@ -1,0 +1,623 @@
+<!-- ✅ schedule.html (FULL PAGE) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Schedule</title>
+
+  <!-- ✅ EXACT font like screenshots -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/dashboard.css" />
+
+  <style>
+    /* ✅ ONLY additions for schedule layout like screenshot (no font changes) */
+    .pagePad{ padding: 22px 26px 28px; }
+    .pageTitle{
+      margin: 8px 0 10px;
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .schedTopRow{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .legend{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .legChip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height: 24px;
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      border-radius: 2px;
+      letter-spacing: .3px;
+      user-select:none;
+    }
+    .legBooked{ background:#f0b400; }  /* FULLY BOOKED (yellow) */
+    .legAvail { background:#7a0b0b; }  /* AVAILABLE (maroon) */
+    .legClosed{ background:#707070; }  /* CLOSED (gray) */
+
+    .pickerRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 6px 0 10px;
+    }
+    .pickerRow select{
+      width: 100%;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,.25);
+      background: #efefef;
+      font: inherit;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    .calCard{
+      background:#cfcfcf;
+      border: 1px solid rgba(0,0,0,.18);
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+      border-radius: 2px;
+      padding: 18px 18px 14px;
+      min-height: 520px;
+    }
+
+    .monthTitle{
+      text-align:center;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: .8px;
+      margin: 6px 0 18px;
+      text-transform: uppercase;
+    }
+
+    .dowRow{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0;
+      margin-bottom: 10px;
+      padding: 0 18px;
+      color:#111;
+      opacity:.9;
+      font-weight: 500;
+    }
+    .dowRow div{
+      text-align:center;
+      font-size: 14px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 18px 18px;
+      padding: 0 18px 10px;
+    }
+
+    .dayBtn{
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font: inherit;
+      font-size: 18px;
+      cursor: pointer;
+      user-select:none;
+      margin: 0 auto;
+      color:#111;
+      transition: filter .12s ease;
+    }
+    .dayBtn:hover{ filter: brightness(1.03); }
+
+    /* state colors like screenshot */
+    .isBooked{ background:#f0b400; }              /* yellow circles */
+    .isAvail { background:#7a0b0b; color:#111; }  /* maroon circles */
+    .isClosed{ background:#707070; color:#111; }  /* gray circles */
+
+    /* selected outline */
+    .isSelected{
+      outline: 4px solid rgba(0,0,0,.25);
+      outline-offset: 2px;
+    }
+
+    /* bottom action buttons */
+    .actionsRow{
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .actBtn{
+      height: 22px;
+      padding: 0 10px;
+      border: none;
+      border-radius: 2px;
+      font: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      color:#fff;
+      background:#6a6a6a;
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      cursor:pointer;
+      user-select:none;
+      transition: filter .12s ease;
+    }
+    .actBtn:hover{ filter: brightness(1.05); }
+    .actBtn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      filter:none;
+    }
+    .actBtn svg{ width: 12px; height: 12px; display:block; }
+
+    /* optional: show SELECT active as maroon (still fine when toggling) */
+    .actBtn.isActive{
+      background:#7a0b0b;
+    }
+
+    .emptyCell{
+      width: 54px;
+      height: 54px;
+      margin: 0 auto;
+      opacity: 0;
+      pointer-events:none;
+    }
+
+    @media (max-width: 1000px){
+      .grid{ gap: 14px; padding: 0 10px; }
+      .dowRow{ padding: 0 10px; }
+      .dayBtn{ width: 48px; height: 48px; }
+      .calCard{ min-height: 520px; }
+      .pickerRow{ grid-template-columns: 1fr; }
+      .legend{ flex-wrap: wrap; justify-content:flex-end; }
+    }
+  </style>
+</head>
+
+<body class="dash-body">
+  <div class="dash">
+
+    <!-- SIDEBAR -->
+    <aside class="dash-sidebar">
+      <div class="dash-logoWrap">
+        <img src="/images/logo.png" class="dash-logo" alt="MeatTrace SCC" />
+      </div>
+
+      <nav class="dash-nav">
+        <a class="dash-link" href="/admin-dashboard.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Dashboard
+        </a>
+
+        <a class="dash-link" href="/appointment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M8 20h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Appointment
+        </a>
+
+        <a class="dash-link" href="/vet-inspection.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Vet Inspection
+        </a>
+
+        <a class="dash-link" href="/payment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2v20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 6.5c0-2-2-3.5-5-3.5S7 4.5 7 6.5 9 10 12 10s5 1.5 5 3.5S15 17 12 17s-5-1.5-5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Payment
+        </a>
+
+        <a class="dash-link" href="/user.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          User
+        </a>
+
+        <a class="dash-link active" href="/schedule.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Schedule
+        </a>
+
+        <a class="dash-link" href="/notifications.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Content
+        </a>
+
+        <a class="dash-link" href="/setting.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M19.4 15a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4.8a7.7 7.7 0 0 0-1.7-1L15 2h-6l-.4 2.8a7.7 7.7 0 0 0-1.7 1L4.5 5 2.5 8.5 4.5 10a7.7 7.7 0 0 0 0 4l-2 1.5 2 3.5 2.4-.8a7.7 7.7 0 0 0 1.7 1L9 22h6l.4-2.8a7.7 7.7 0 0 0 1.7-1l2.4.8 2-3.5-2-1.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+      <!-- TOPBAR -->
+      <header class="dash-topbar">
+        <div class="searchbar">
+          <span class="search-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          <input id="searchInput" type="text" placeholder="Search" />
+        </div>
+
+        <div class="top-actions">
+          <button class="iconBtn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="userChip" id="userChip" aria-haspopup="true" aria-expanded="false">
+            <button class="userBtn" id="userBtn" aria-label="Open user menu">
+              <span class="avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span id="adminName">Admin</span>
+              <span class="chev">▾</span>
+            </button>
+
+            <div id="userMenu" class="userMenu" role="menu" aria-hidden="true">
+              <div class="userMenuHead">
+                <div class="uAvatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="uMeta">
+                  <div class="uName" id="menuName">Admin</div>
+                  <div class="uEmail" id="menuEmail">admin@email.com</div>
+                </div>
+              </div>
+
+              <div class="userMenuDivider" role="separator"></div>
+
+              <div class="userMenuFooter">
+                <button id="logoutBtn" class="logoutBtn" type="button">Log out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="pagePad">
+        <div class="schedTopRow">
+          <h1 class="pageTitle">Schedule</h1>
+
+          <div class="legend">
+            <span class="legChip legBooked">FULLY BOOKED</span>
+            <span class="legChip legAvail">AVAILABLE</span>
+            <span class="legChip legClosed">CLOSED</span>
+          </div>
+        </div>
+
+        <!-- Month / Year dropdowns -->
+        <div class="pickerRow">
+          <select id="monthSel" aria-label="Select month"></select>
+          <select id="yearSel" aria-label="Select year"></select>
+        </div>
+
+        <!-- Calendar panel -->
+        <div class="calCard">
+          <div class="monthTitle" id="monthTitle">FEBRUARY</div>
+
+          <div class="dowRow">
+            <div>Sunday</div><div>Monday</div><div>Tuesday</div><div>Wednesday</div>
+            <div>Thursday</div><div>Friday</div><div>Saturday</div>
+          </div>
+
+          <div id="grid" class="grid"></div>
+
+          <div class="actionsRow">
+            <button id="removeBtn" class="actBtn" type="button" disabled>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              REMOVE
+            </button>
+
+            <button id="selectBtn" class="actBtn" type="button" disabled>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12l5 5L19 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              SELECT
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0rJ7-NMwC-qDIziAiaH4AtSOOWQnEiqY",
+      authDomain: "meatrace-7e6f0.firebaseapp.com",
+      projectId: "meatrace-7e6f0",
+      storageBucket: "meatrace-7e6f0.firebasestorage.app",
+      messagingSenderId: "713463510875",
+      appId: "1:713463510875:web:d057a91702ee3d11e88c7e",
+      measurementId: "G-4SDSMBNVGN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const apptCol = collection(db, "appointments");
+
+    const pad2 = (x) => String(x).padStart(2, "0");
+    const safeText = (x) => (x ?? "").toString();
+
+    // ===== top-right user menu =====
+    const userChip = document.getElementById("userChip");
+    const userBtn  = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function openUserMenu(open) {
+      userMenu.setAttribute("aria-hidden", String(!open));
+      userChip.setAttribute("aria-expanded", String(open));
+    }
+    userBtn.addEventListener("click", () => {
+      const isOpen = userMenu.getAttribute("aria-hidden") === "false";
+      openUserMenu(!isOpen);
+    });
+    document.addEventListener("click", (e) => {
+      if (!userChip.contains(e.target)) openUserMenu(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") openUserMenu(false);
+    });
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) {}
+      window.location.href = "/login.html";
+    });
+
+    const adminNameEl = document.getElementById("adminName");
+    const menuNameEl = document.getElementById("menuName");
+    const menuEmailEl = document.getElementById("menuEmail");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const name = user.displayName || "Admin";
+        const email = user.email || "admin@email.com";
+        adminNameEl.textContent = name;
+        menuNameEl.textContent = name;
+        menuEmailEl.textContent = email;
+      } else {
+        window.location.href = "/login.html";
+      }
+    });
+
+    // ===== Calendar state =====
+    const monthSel = document.getElementById("monthSel");
+    const yearSel  = document.getElementById("yearSel");
+    const monthTitle = document.getElementById("monthTitle");
+    const grid = document.getElementById("grid");
+
+    const removeBtn = document.getElementById("removeBtn");
+    const selectBtn = document.getElementById("selectBtn");
+
+    const MONTHS = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+
+    let selectedKey = "";
+    let statusMap = new Map();
+
+    function ymdFromParts(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+
+    function setButtons(){
+      const has = !!selectedKey;
+      removeBtn.disabled = !has;
+      selectBtn.disabled = !has;
+      if (!has) selectBtn.classList.remove("isActive");
+    }
+
+    function setSelected(key){
+      selectedKey = key;
+      setButtons();
+      renderCalendar();
+    }
+
+    function fillDropdowns(){
+      monthSel.innerHTML = MONTHS.map((m,i)=> `<option value="${i}">${m}</option>`).join("");
+
+      const now = new Date();
+      const y0 = now.getFullYear() - 2;
+      const y1 = now.getFullYear() + 6;
+
+      let yOps = "";
+      for (let y=y0; y<=y1; y++) yOps += `<option value="${y}">${y}</option>`;
+      yearSel.innerHTML = yOps;
+    }
+
+    async function buildStatusMap(y, m){
+      statusMap = new Map();
+
+      // default: weekdays available, Saturdays closed (matches screenshot)
+      const daysInMonth = new Date(y, m+1, 0).getDate();
+      for (let d=1; d<=daysInMonth; d++){
+        const wd = new Date(y, m, d).getDay();
+        const key = ymdFromParts(y,m,d);
+        statusMap.set(key, wd === 6 ? "closed" : "available");
+      }
+
+      // Optional: auto mark booked from appointments
+      let snap;
+      try{
+        const start = `${y}-${pad2(m+1)}-01`;
+        const end = `${y}-${pad2(m+1)}-31`;
+        snap = await getDocs(query(apptCol, where("dateKey", ">=", start), where("dateKey", "<=", end)));
+      }catch(e){
+        snap = await getDocs(query(apptCol, orderBy("createdAt","desc"), limit(300)));
+      }
+
+      const counts = new Map();
+      snap.forEach(docu => {
+        const a = docu.data();
+        const key = safeText(a.dateKey || "");
+        if (!key) return;
+        if (!key.startsWith(`${y}-${pad2(m+1)}-`)) return;
+        counts.set(key, (counts.get(key)||0) + 1);
+      });
+
+      const FULLY_BOOKED_AT = 999999; // keep high so your manual toggle controls colors
+
+      for (const [key, c] of counts.entries()){
+        if (statusMap.get(key) === "closed") continue;
+        if (c >= FULLY_BOOKED_AT) statusMap.set(key, "booked");
+      }
+    }
+
+    function renderCalendar(){
+      const y = Number(yearSel.value);
+      const m = Number(monthSel.value);
+
+      monthTitle.textContent = MONTHS[m].toUpperCase();
+
+      const firstDow = new Date(y, m, 1).getDay();
+      const daysInMonth = new Date(y, m+1, 0).getDate();
+
+      let html = "";
+      for (let i=0; i<firstDow; i++) html += `<div class="emptyCell"></div>`;
+
+      for (let d=1; d<=daysInMonth; d++){
+        const key = ymdFromParts(y,m,d);
+        const st = statusMap.get(key) || "available";
+
+        const cls =
+          st === "booked" ? "dayBtn isBooked" :
+          st === "closed" ? "dayBtn isClosed" :
+          "dayBtn isAvail";
+
+        const selCls = (selectedKey === key) ? " isSelected" : "";
+        html += `<button class="${cls}${selCls}" type="button" data-key="${key}">${d}</button>`;
+      }
+
+      grid.innerHTML = html;
+
+      grid.querySelectorAll("button.dayBtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.key;
+          setSelected(selectedKey === key ? "" : key);
+        });
+      });
+    }
+
+    async function refresh(){
+      const y = Number(yearSel.value);
+      const m = Number(monthSel.value);
+      await buildStatusMap(y, m);
+
+      if (selectedKey && !selectedKey.startsWith(`${y}-${pad2(m+1)}-`)) selectedKey = "";
+      setButtons();
+      renderCalendar();
+    }
+
+    // ✅ SELECT: toggle ONLY between YELLOW(booked) and MAROON(available)
+    selectBtn.addEventListener("click", () => {
+      if (!selectedKey) return;
+
+      const cur = statusMap.get(selectedKey) || "available";
+      if (cur === "booked") statusMap.set(selectedKey, "available");
+      else statusMap.set(selectedKey, "booked"); // includes closed -> booked if you selected a closed day
+
+      // button active style optional
+      selectBtn.classList.add("isActive");
+      renderCalendar();
+    });
+
+    // ✅ REMOVE: always change selected day to GRAY(closed)
+    removeBtn.addEventListener("click", () => {
+      if (!selectedKey) return;
+      statusMap.set(selectedKey, "closed");
+      selectBtn.classList.remove("isActive");
+      renderCalendar();
+    });
+
+    monthSel.addEventListener("change", refresh);
+    yearSel.addEventListener("change", refresh);
+
+    (async function init(){
+      fillDropdowns();
+      const now = new Date();
+      monthSel.value = String(now.getMonth());
+      yearSel.value = String(now.getFullYear());
+      await refresh();
+    })();
+  </script>
+</body>
+</html>

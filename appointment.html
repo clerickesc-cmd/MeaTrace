@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Appointment</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/dashboard.css" />
+
+  <style>
+    .dash-link .ico { width: 22px; height: 22px; display:inline-flex; align-items:center; justify-content:center; }
+    .dash-link .ico svg { width: 22px; height: 22px; display:block; }
+
+    .miniLinkBtn{
+      border:none;background:transparent;cursor:pointer;font-family:inherit;
+      font-size:12px;opacity:.85;padding:0;text-decoration:none;white-space:nowrap;
+    }
+    .miniLinkBtn:hover{opacity:1;text-decoration:underline;}
+
+    /* schedule cards layout */
+    .schedRow { display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; }
+    .schedCard {
+      background:#d9d9d9;border-radius:10px;padding:10px 12px;min-width:240px;flex:1 1 260px;position:relative;
+    }
+    .schedCard .pin{position:absolute; left:10px; top:10px; opacity:.75; width:16px; height:16px;}
+    .schedCard .chk{position:absolute; right:10px; top:10px; opacity:.75; width:16px; height:16px;}
+    .schedCard .sName{font-weight:600;margin-left:22px;margin-right:22px;}
+    .schedCard .sMeta{font-size:12px;opacity:.9;margin-left:22px;}
+    .schedCard .sMeta + .sMeta{margin-top:2px;}
+
+    .pageH1{font-size:28px;font-weight:700;margin:8px 0 0;}
+    .sectionH2{font-size:24px;font-weight:700;margin:18px 0 6px;}
+
+    .apptTabs{display:flex;gap:22px;align-items:center;font-size:13px;margin:6px 0 10px;}
+    .apptTab{background:none;border:none;padding:0;cursor:pointer;opacity:.8;font-family:inherit;font-size:13px;}
+    .apptTab.active{opacity:1;font-weight:600;text-decoration:underline;}
+
+    /* ✅ View all/back beside Cancelled */
+    .apptTabs{ position:relative; }
+    #apptToggleBtn{ margin-left:auto; align-self:center; }
+
+    .apptTable tbody tr{transition:background .15s ease; cursor:pointer;}
+    .apptTable tbody tr:hover{background:rgba(0,0,0,.04);}
+
+    .archBtn{
+      background:#d9d9d9;border:none;border-radius:10px;padding:8px 14px;cursor:pointer;font-family:inherit;
+      display:inline-flex;gap:8px;align-items:center;
+    }
+    .archBtn:hover{filter:brightness(.97);}
+
+    .userMenu{z-index:9999;}
+
+    /* modes */
+    body.mode-today #todayCards{display:none!important;}
+    body.mode-today #appointmentSection{display:none!important;}
+    body.mode-today #archivedBtn{display:none!important;}
+
+    body.mode-all .todayHeaderRow{display:none!important;}
+    body.mode-all #todayCards{display:none!important;}
+
+    /* ✅ DETAILS VIEW */
+    body.mode-detail .todayHeaderRow,
+    body.mode-detail #todayCards,
+    body.mode-detail #todayDetailsSection,
+    body.mode-detail #appointmentSection{
+      display:none!important;
+    }
+    body.mode-detail #detailSection{
+      display:block!important;
+    }
+
+    #detailSection{ display:none; margin-top: 16px; }
+
+    .detailCard{
+      background:#d9d9d9;
+      border-radius:12px;
+      overflow:hidden;
+      max-width: 820px;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+    .detailTop{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:0;
+    }
+    .detailCol{
+      padding:10px 12px 12px;
+      border-right:1px solid rgba(0,0,0,.15);
+    }
+    .detailCol:last-child{border-right:none;}
+    .detailHead{
+      background:#7a0f0f;
+      color:#fff;
+      border-radius:10px 10px 0 0;
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:600;
+      font-size:13px;
+      margin:-10px -12px 10px;
+    }
+    .detailHead svg{width:16px;height:16px;}
+    .detailRow{font-size:12px; line-height:1.35; margin:4px 0;}
+    .detailLabel{font-weight:600;}
+    .detailTable{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+    .detailTable th, .detailTable td{
+      padding:6px 6px;
+      border-bottom:1px solid rgba(0,0,0,.15);
+      text-align:left;
+    }
+    .detailTable th:last-child, .detailTable td:last-child{ text-align:right; }
+    .detailTable td.qty{ text-align:right; }
+    .detailTotal{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:8px;
+      font-size:12px;
+      font-weight:700;
+    }
+    .detailNote{
+      background:#bdbdbd;
+      padding:10px 12px;
+      font-size:11px;
+      text-transform:uppercase;
+      text-align:center;
+      letter-spacing:.3px;
+    }
+    .detailActions{
+      display:flex;
+      justify-content:flex-end;
+      gap:12px;
+      margin-top:14px;
+      max-width: 820px;
+    }
+    .pillBtn{
+      border:none;
+      border-radius:999px;
+      padding:8px 16px;
+      font-family:inherit;
+      cursor:pointer;
+      font-size:13px;
+      color:#fff;
+    }
+    .pillCancel{ background:#7a0f0f; }
+    .pillComplete{ background:#0f6b3a; }
+
+    /* ✅ EXACT status pill (green/red) like your screenshot */
+    .statusBannerWrap{
+      display:flex;
+      justify-content:flex-end;
+      margin-top:18px;
+      max-width:820px;
+    }
+    .statusBanner{
+      color:#fff;
+      border-radius:999px;
+      padding:10px 22px;         /* size */
+      font-size:18px;            /* text size */
+      font-weight:500;
+      min-width: 320px;          /* width like screenshot */
+      text-align:center;
+      line-height:1.2;
+    }
+    .status-green{ background:#0f6b3a; }
+    .status-red{ background:#7a0f0f; }
+
+    /* top-right back in details */
+    .topBackBtn{
+      display:none;
+      border:none;background:transparent;cursor:pointer;font-family:inherit;
+      font-size:12px;opacity:.85;margin-right:10px;
+    }
+    .topBackBtn:hover{opacity:1;text-decoration:underline;}
+    body.mode-detail .topBackBtn{ display:inline-block; }
+
+    /* ✅ CONFIRMATION MODAL */
+    .modalOverlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:99999;
+      padding:18px;
+    }
+    .modalOverlay.show{ display:flex; }
+    .modalBox{
+      width:min(420px, 95vw);
+      background:#fff;
+      border-radius:16px;
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
+      overflow:hidden;
+      font-family:inherit;
+    }
+    .modalHead{
+      background:#7a0f0f;
+      color:#fff;
+      padding:14px 16px;
+      font-weight:700;
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .modalClose{
+      border:none;
+      background:transparent;
+      color:#fff;
+      cursor:pointer;
+      font-size:18px;
+      line-height:1;
+      opacity:.9;
+    }
+    .modalClose:hover{ opacity:1; }
+    .modalBody{
+      padding:16px;
+      font-size:14px;
+      color:#111;
+    }
+    .modalActions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      padding:0 16px 16px;
+    }
+    .mBtn{
+      border:none;
+      border-radius:999px;
+      padding:10px 16px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:13px;
+      font-weight:600;
+    }
+    .mBtnGhost{
+      background:#e9e9e9;
+      color:#111;
+    }
+    .mBtnDanger{
+      background:#7a0f0f;
+      color:#fff;
+    }
+    .mBtnSuccess{
+      background:#0f6b3a;
+      color:#fff;
+    }
+  </style>
+</head>
+
+<body class="dash-body">
+  <div class="dash">
+
+    <!-- SIDEBAR -->
+    <aside class="dash-sidebar">
+      <div class="dash-logoWrap">
+        <img src="/images/logo.png" class="dash-logo" alt="MeatTrace SCC" />
+      </div>
+
+      <nav class="dash-nav">
+        <a class="dash-link" href="/admin-dashboard.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Dashboard
+        </a>
+
+        <a class="dash-link active" href="/appointment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 4h12a2 2 0 0 1 2 2v14H8a2 2 0 0 0-2 2V4Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M8 20h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Appointment
+        </a>
+
+        <a class="dash-link" href="/vet-inspection.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M22 11.1V12a10 10 0 1 1-5.93-9.14"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M22 4 12 14l-3-3"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Vet Inspection
+        </a>
+
+        <a class="dash-link" href="/payment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2v20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 6.5c0-2-2-3.5-5-3.5S7 4.5 7 6.5 9 10 12 10s5 1.5 5 3.5S15 17 12 17s-5-1.5-5-3.5"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Payment
+        </a>
+
+        <a class="dash-link" href="/user.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"
+                stroke="currentColor" stroke-width="2"/>
+              <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          User
+        </a>
+
+        <a class="dash-link" href="/schedule.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20Z"
+                stroke="currentColor" stroke-width="2"/>
+              <path d="M12 6v6l4 2"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Schedule
+        </a>
+
+        <a class="dash-link" href="/notificationshtml">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M16.5 3.5a2.1 2 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Content
+        </a>
+
+        <a class="dash-link" href="/setting.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+                stroke="currentColor" stroke-width="2"/>
+              <path d="M19.4 15a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4.8a7.7 7.7 0 0 0-1.7-1L15 2h-6l-.4 2.8a7.7 7.7 0 0 0-1.7 1L4.5 5 2.5 8.5 4.5 10a7.7 7.7 0 0 0 0 4l-2 1.5 2 3.5 2.4-.8a7.7 7.7 0 0 0 1.7 1L9 22h6l.4-2.8a7.7 7.7 0 0 0 1.7-1l2.4.8 2-3.5-2-1.5Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+      <!-- TOPBAR -->
+      <header class="dash-topbar">
+        <div class="searchbar">
+          <span class="search-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          <input id="searchInput" type="text" placeholder="Search" />
+        </div>
+
+        <div class="top-actions">
+          <button id="topBackBtn" class="topBackBtn" type="button">Back</button>
+
+          <button class="iconBtn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="userChip" id="userChip" aria-haspopup="true" aria-expanded="false">
+            <button class="userBtn" id="userBtn" aria-label="Open user menu" type="button">
+              <span class="avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span id="adminName">Admin</span>
+              <span class="chev">▾</span>
+            </button>
+
+            <div id="userMenu" class="userMenu" role="menu" aria-hidden="true">
+              <div class="userMenuHead">
+                <div class="uAvatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="uMeta">
+                  <div class="uName" id="menuName">Admin</div>
+                  <div class="uEmail" id="menuEmail">admin@email.com</div>
+                </div>
+              </div>
+
+              <div class="userMenuDivider" role="separator"></div>
+
+              <div class="userMenuFooter">
+                <button id="logoutBtn" class="logoutBtn" type="button">Log out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- TODAY HEADER ROW -->
+      <div class="todayHeaderRow" style="display:flex; align-items:center; justify-content:space-between; margin-top: 8px;">
+        <div style="display:flex; align-items:baseline; gap:10px;">
+          <h1 class="pageH1">Today’ Schedules</h1>
+          <button id="todayToggleBtn" class="miniLinkBtn" type="button">View All...</button>
+        </div>
+
+        <button id="archivedBtn" class="archBtn" type="button" aria-pressed="false">
+          <span aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 7v13h12V7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M10 11h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M5 4h14l1 3H4l1-3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span id="archivedLabel">Archived</span>
+        </button>
+      </div>
+
+      <div id="todayCards" class="schedRow" aria-live="polite"></div>
+
+      <!-- TODAY DETAILS -->
+      <section id="todayDetailsSection" style="margin-top: 12px; display:none;">
+        <h2 class="sectionH2" style="margin:0 0 10px;">Today’s Appointment</h2>
+        <div class="tableCard">
+          <table class="apptTable">
+            <thead>
+              <tr>
+                <th>ID No.</th><th>Name</th><th>Address</th><th>Number</th>
+                <th>Date</th><th>Time</th><th>Selected Animals</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="todayBody">
+              <tr class="emptyRow"><td colspan="8">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- APPOINTMENT SECTION -->
+      <section id="appointmentSection" style="margin-top: 20px;">
+        <h2 id="apptTitle" class="sectionH2" style="margin:0;">Appointment</h2>
+
+        <div id="apptTabsWrap" class="apptTabs" role="tablist" aria-label="Appointment filters">
+          <button class="apptTab active" data-filter="All" role="tab" type="button">All Appointment</button>
+          <button class="apptTab" data-filter="Pending" role="tab" type="button">Pending</button>
+          <button class="apptTab" data-filter="Completed" role="tab" type="button">Completed</button>
+          <button class="apptTab" data-filter="Cancelled" role="tab" type="button">Cancelled</button>
+
+          <button id="apptToggleBtn" class="miniLinkBtn" type="button">View All...</button>
+        </div>
+
+        <div class="tableCard">
+          <table class="apptTable">
+            <thead>
+              <tr>
+                <th>ID No.</th><th>Name</th><th>Address</th><th>Number</th>
+                <th>Date</th><th>Time</th><th>Selected Animals</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="apptBody">
+              <tr class="emptyRow"><td colspan="8">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ✅ DETAILS VIEW -->
+      <section id="detailSection">
+        <h2 class="sectionH2" style="margin:0 0 10px;">Appointment</h2>
+
+        <div class="detailCard">
+          <div class="detailTop">
+            <div class="detailCol">
+              <div class="detailHead">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>User Details</span>
+              </div>
+
+              <div class="detailRow"><span class="detailLabel">Receiver:</span></div>
+              <div class="detailRow" id="d_name">—</div>
+              <div class="detailRow" id="d_number">—</div>
+              <div class="detailRow" id="d_address">—</div>
+            </div>
+
+            <div class="detailCol">
+              <div class="detailHead">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M14 3l7 7-9 9-7-7 9-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+                <span>Slaughtered Animals</span>
+              </div>
+
+              <table class="detailTable" aria-label="Animals table">
+                <thead>
+                  <tr><th>Animals</th><th style="text-align:right;">Qty</th></tr>
+                </thead>
+                <tbody id="d_animals">
+                  <tr><td>—</td><td class="qty">—</td></tr>
+                </tbody>
+              </table>
+
+              <div class="detailTotal">
+                <span>Total:</span>
+                <span id="d_total">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detailNote" id="d_note">
+            THE ANIMALS WILL ARRIVE ON — AT —.
+          </div>
+        </div>
+
+        <!-- ✅ SHOW THIS AFTER COMPLETED/CANCELLED -->
+        <div id="statusBannerWrap" class="statusBannerWrap" style="display:none;">
+          <div id="statusBanner" class="statusBanner status-green">Appointment Complete!</div>
+        </div>
+
+        <!-- action buttons (hide when completed/cancelled) -->
+        <div id="detailActions" class="detailActions">
+          <button id="cancelBtn" class="pillBtn pillCancel" type="button">Cancelled</button>
+          <button id="completeBtn" class="pillBtn pillComplete" type="button">Completed</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ✅ CONFIRM MODAL (for Cancelled/Completed) -->
+  <div id="confirmOverlay" class="modalOverlay" aria-hidden="true">
+    <div class="modalBox" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMsg">
+      <div class="modalHead">
+        <span id="confirmTitle">Confirm</span>
+        <button id="confirmClose" class="modalClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modalBody" id="confirmMsg">Are you sure?</div>
+      <div class="modalActions">
+        <button id="confirmNo" class="mBtn mBtnGhost" type="button">No</button>
+        <button id="confirmYes" class="mBtn mBtnDanger" type="button">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      where,
+      orderBy,
+      limit,
+      doc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0rJ7-NMwC-qDIziAiaH4AtSOOWQnEiqY",
+      authDomain: "meatrace-7e6f0.firebaseapp.com",
+      projectId: "meatrace-7e6f0",
+      storageBucket: "meatrace-7e6f0.firebasestorage.app",
+      messagingSenderId: "713463510875",
+      appId: "1:713463510875:web:d057a91702ee3d11e88c7e",
+      measurementId: "G-4SDSMBNVGN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const apptCol = collection(db, "appointments");
+
+    const pad2 = (x) => String(x).padStart(2, "0");
+    const safeText = (x) => (x ?? "").toString();
+
+    const todayKey = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    };
+
+    function toYMD(value) {
+      if (!value) return "";
+      if (typeof value === "object" && value.seconds) {
+        const d = new Date(value.seconds * 1000);
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+      }
+      if (value instanceof Date) {
+        return `${value.getFullYear()}-${pad2(value.getMonth()+1)}-${pad2(value.getDate())}`;
+      }
+      if (typeof value === "string") {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+        const d = new Date(value);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+        }
+      }
+      return "";
+    }
+
+    function formatPrettyDate(value) {
+      const ymd = toYMD(value);
+      if (!ymd) return "";
+      const d = new Date(ymd + "T00:00:00");
+      return d.toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
+    }
+
+    function getApptDateField(a) {
+      return (
+        a.dateKey ??
+        a.date ??
+        a.appointmentDate ??
+        a.scheduleDate ??
+        a.appDate ??
+        a.appointment_day ??
+        a.moveAt ??
+        null
+      );
+    }
+
+    function getApptTimeField(a) {
+      return (
+        a.time ??
+        a.timeSlot ??
+        a.appointmentTime ??
+        a.scheduleTime ??
+        a.time_range ??
+        "—"
+      );
+    }
+
+    // profile dropdown + logout
+    const userChip = document.getElementById("userChip");
+    const userBtn  = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function openUserMenu(open) {
+      userMenu.setAttribute("aria-hidden", String(!open));
+      userChip.setAttribute("aria-expanded", String(open));
+    }
+
+    userBtn.addEventListener("click", () => {
+      const isOpen = userMenu.getAttribute("aria-hidden") === "false";
+      openUserMenu(!isOpen);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!userChip.contains(e.target)) openUserMenu(false);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") openUserMenu(false);
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) {}
+      window.location.href = "/login.html";
+    });
+
+    const adminNameEl = document.getElementById("adminName");
+    const menuNameEl = document.getElementById("menuName");
+    const menuEmailEl = document.getElementById("menuEmail");
+
+    // ✅ CONFIRM MODAL LOGIC
+    const confirmOverlay = document.getElementById("confirmOverlay");
+    const confirmTitle = document.getElementById("confirmTitle");
+    const confirmMsg = document.getElementById("confirmMsg");
+    const confirmYes = document.getElementById("confirmYes");
+    const confirmNo = document.getElementById("confirmNo");
+    const confirmClose = document.getElementById("confirmClose");
+
+    let confirmResolver = null;
+
+    function openConfirm({ title="Confirm", message="Are you sure?", yesText="Yes", tone="danger" } = {}) {
+      confirmTitle.textContent = title;
+      confirmMsg.textContent = message;
+      confirmYes.textContent = yesText;
+
+      confirmYes.classList.remove("mBtnDanger", "mBtnSuccess");
+      confirmYes.classList.add(tone === "success" ? "mBtnSuccess" : "mBtnDanger");
+
+      confirmOverlay.classList.add("show");
+      confirmOverlay.setAttribute("aria-hidden", "false");
+
+      // focus "Yes" by default like a confirm dialog
+      setTimeout(() => confirmYes.focus(), 0);
+
+      return new Promise((resolve) => {
+        confirmResolver = resolve;
+      });
+    }
+
+    function closeConfirm(result) {
+      confirmOverlay.classList.remove("show");
+      confirmOverlay.setAttribute("aria-hidden", "true");
+      const r = confirmResolver;
+      confirmResolver = null;
+      if (r) r(result);
+    }
+
+    confirmYes.addEventListener("click", () => closeConfirm(true));
+    confirmNo.addEventListener("click", () => closeConfirm(false));
+    confirmClose.addEventListener("click", () => closeConfirm(false));
+    confirmOverlay.addEventListener("click", (e) => {
+      if (e.target === confirmOverlay) closeConfirm(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (confirmOverlay.classList.contains("show") && e.key === "Escape") closeConfirm(false);
+    });
+
+    // state
+    let currentFilter = "All";
+    let showArchived = false;
+    let cachedAppointments = [];
+    const DEFAULT_LIMIT = 20;
+    let tableLimit = DEFAULT_LIMIT;
+
+    // modes: none | today | all | detail
+    let mode = "none";
+    let selectedDocId = null;
+    let prevMode = "none";
+
+    // elements
+    const todayToggleBtn = document.getElementById("todayToggleBtn");
+    const apptToggleBtn = document.getElementById("apptToggleBtn");
+    const todayDetailsSection = document.getElementById("todayDetailsSection");
+    const topBackBtn = document.getElementById("topBackBtn");
+
+    // banner + actions
+    const statusBannerWrap = document.getElementById("statusBannerWrap");
+    const statusBanner = document.getElementById("statusBanner");
+    const detailActions = document.getElementById("detailActions");
+
+    // archived label
+    const archivedBtn = document.getElementById("archivedBtn");
+    const archivedLabel = document.getElementById("archivedLabel");
+    function syncArchivedLabel() {
+      archivedLabel.textContent = showArchived ? "Archived (Showing)" : "Archived";
+      archivedBtn.setAttribute("aria-pressed", String(showArchived));
+    }
+
+    // mode control
+    function setMode(next) {
+      mode = next;
+
+      document.body.classList.toggle("mode-today", mode === "today");
+      document.body.classList.toggle("mode-all", mode === "all");
+      document.body.classList.toggle("mode-detail", mode === "detail");
+
+      todayToggleBtn.textContent = (mode === "today") ? "Back" : "View All...";
+      apptToggleBtn.textContent  = (mode === "all") ? "Back" : "View All...";
+
+      todayDetailsSection.style.display = (mode === "today") ? "" : "none";
+
+      if (mode === "none") {
+        tableLimit = DEFAULT_LIMIT;
+        renderAppointmentTable();
+        window.scrollTo({ top: 0, behavior:"smooth" });
+      }
+
+      if (mode === "today") {
+        renderTodayTable();
+        todayDetailsSection.scrollIntoView({ behavior:"smooth", block:"start" });
+      }
+
+      if (mode === "all") {
+        tableLimit = 300;
+        renderAppointmentTable();
+        document.getElementById("appointmentSection").scrollIntoView({ behavior:"smooth", block:"start" });
+      }
+
+      if (mode === "detail") {
+        document.getElementById("detailSection").scrollIntoView({ behavior:"smooth", block:"start" });
+      }
+    }
+
+    todayToggleBtn.addEventListener("click", () => setMode(mode === "today" ? "none" : "today"));
+    apptToggleBtn.addEventListener("click", () => setMode(mode === "all" ? "none" : "all"));
+    topBackBtn.addEventListener("click", () => setMode(prevMode || "none"));
+
+    archivedBtn.addEventListener("click", async () => {
+      showArchived = !showArchived;
+      syncArchivedLabel();
+      await loadTodaySchedules();
+    });
+
+    // render today cards
+    function renderTodayCards(items) {
+      const wrap = document.getElementById("todayCards");
+      wrap.innerHTML = "";
+
+      if (!items.length) {
+        wrap.innerHTML = `<div class="todayEmpty">No Schedules Found</div>`;
+        return;
+      }
+
+      items.slice(0, 3).forEach(a => {
+        const name = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
+        const address = safeText(a.address ?? a.location ?? "—");
+        const number = safeText(a.number ?? a.phone ?? a.contact ?? "—");
+        const datePretty = formatPrettyDate(getApptDateField(a));
+        const time = safeText(getApptTimeField(a));
+        const animals = safeText(a.selectedAnimals ?? a.animals ?? "—");
+
+        const card = document.createElement("div");
+        card.className = "schedCard";
+        card.innerHTML = `
+          <span class="pin" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 12.5 14.5 6a3 3 0 0 1 4.2 4.2l-8.6 8.6a5 5 0 0 1-7.1-7.1l8.1-8.1"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="chk" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 6h12v12H6z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+
+          <div class="sName">${name}</div>
+          <div class="sMeta">${address}</div>
+          <div class="sMeta">${number}</div>
+          <div class="sMeta">${datePretty || "—"} | ${time}</div>
+          <div class="sMeta">${animals}</div>
+        `;
+        wrap.appendChild(card);
+      });
+    }
+
+    function buildRowHTML(a){
+      const idNo = safeText(a.idNo ?? a.idNumber ?? a.ticketId ?? a.docId);
+      const name = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
+      const address = safeText(a.address ?? a.location ?? "—");
+      const number = safeText(a.number ?? a.phone ?? a.contact ?? "—");
+      const datePretty = formatPrettyDate(getApptDateField(a));
+      const time = safeText(getApptTimeField(a));
+      const animals = safeText(a.selectedAnimals ?? a.animals ?? "—");
+      const status = safeText(a.status ?? "Pending");
+
+      return `
+        <td>${idNo || "—"}</td>
+        <td>${name}</td>
+        <td>${address}</td>
+        <td>${number}</td>
+        <td>${datePretty || "—"}</td>
+        <td>${time}</td>
+        <td>${animals}</td>
+        <td>${status}</td>
+      `;
+    }
+
+    function renderAppointmentTable() {
+      const tbody = document.getElementById("apptBody");
+      tbody.innerHTML = "";
+
+      let rows = [...cachedAppointments];
+
+      if (currentFilter !== "All") {
+        rows = rows.filter(x => safeText(x.status).toLowerCase() === currentFilter.toLowerCase());
+      }
+
+      rows = rows.slice(0, tableLimit);
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr class="emptyRow"><td colspan="8">No appointments found.</td></tr>`;
+        return;
+      }
+
+      rows.forEach(a => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = buildRowHTML(a);
+        tr.addEventListener("click", () => { prevMode = mode; openDetail(a.docId); });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTodayTable() {
+      const tbody = document.getElementById("todayBody");
+      tbody.innerHTML = "";
+
+      const tKey = todayKey();
+      let rows = cachedAppointments.filter(a => toYMD(getApptDateField(a)) === tKey);
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr class="emptyRow"><td colspan="8">No appointments found.</td></tr>`;
+        return;
+      }
+
+      rows.forEach(a => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = buildRowHTML(a);
+        tr.addEventListener("click", () => { prevMode = mode; openDetail(a.docId); });
+        tbody.appendChild(tr);
+      });
+    }
+
+    // loaders
+    async function loadAppointments() {
+      let snap = null;
+      try {
+        snap = await getDocs(query(apptCol, orderBy("createdAt", "desc"), limit(300)));
+      } catch (e1) {
+        try {
+          snap = await getDocs(query(apptCol, orderBy("moveAt", "desc"), limit(300)));
+        } catch (e2) {
+          snap = await getDocs(query(apptCol, limit(300)));
+        }
+      }
+
+      const arr = [];
+      snap.forEach(d => arr.push({ docId: d.id, ...d.data() }));
+
+      arr.sort((a, b) => {
+        const da = new Date((toYMD(getApptDateField(a)) || "1970-01-01") + "T00:00:00").getTime();
+        const dbb = new Date((toYMD(getApptDateField(b)) || "1970-01-01") + "T00:00:00").getTime();
+        return dbb - da;
+      });
+
+      cachedAppointments = arr;
+
+      renderAppointmentTable();
+      renderTodayTable();
+    }
+
+  async function loadTodaySchedules() {
+  const tKey = todayKey();
+  let docsArr = [];
+
+  const norm = (v) => safeText(v).trim().toLowerCase();
+
+  try {
+    const q1 = query(apptCol, where("dateKey", "==", tKey));
+    const s1 = await getDocs(q1);
+    s1.forEach(d => docsArr.push({ docId: d.id, ...d.data() }));
+  } catch (e) {}
+
+  if (!docsArr.length) {
+    docsArr = cachedAppointments.filter(a => toYMD(getApptDateField(a)) === tKey);
+  }
+
+  // ✅ choose status based on bookingStatus first, fallback to status
+  const getRealStatus = (a) => {
+    const bs = norm(a.bookingStatus);
+    if (bs) return bs;           // bookingStatus controls if present
+    return norm(a.status);
+  };
+
+  if (!showArchived) {
+    // Normal mode: show only pending
+    docsArr = docsArr.filter(a => getRealStatus(a) === "pending");
+  } else {
+    // Archived mode: show only completed/cancelled
+    docsArr = docsArr.filter(a => {
+      const st = getRealStatus(a);
+      return st === "completed" || st === "cancelled";
+    });
+  }
+
+  renderTodayCards(docsArr);
+}
+    // tabs
+    document.querySelectorAll(".apptTab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".apptTab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.filter;
+        renderAppointmentTable();
+      });
+    });
+
+    // search (appointments table)
+    document.getElementById("searchInput").addEventListener("input", () => {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#apptBody tr");
+      rows.forEach(r => {
+        const txt = r.innerText.toLowerCase();
+        r.style.display = txt.includes(q) ? "" : "none";
+      });
+    });
+
+    // details
+    const d_name = document.getElementById("d_name");
+    const d_number = document.getElementById("d_number");
+    const d_address = document.getElementById("d_address");
+    const d_animals = document.getElementById("d_animals");
+    const d_total = document.getElementById("d_total");
+    const d_note = document.getElementById("d_note");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const completeBtn = document.getElementById("completeBtn");
+
+    function normalizeAnimals(a){
+      const out = [];
+      const list = a.animalsBreakdown ?? a.animalsList ?? a.animals ?? null;
+
+      if (Array.isArray(list)) {
+        list.forEach(it => {
+          const animal = safeText(it.type ?? it.animal ?? it.name ?? "—");
+          const qty = Number(it.qty ?? it.quantity ?? it.count ?? 0) || 0;
+          if (animal) out.push({ animal, qty });
+        });
+      } else {
+        const s = safeText(a.selectedAnimals ?? "");
+        if (s) {
+          s.split(",").map(x => x.trim()).filter(Boolean).forEach(part => {
+            const m = part.match(/(.+?)\s*x\s*(\d+)/i);
+            if (m) out.push({ animal: m[1].trim(), qty: Number(m[2]) });
+            else out.push({ animal: part, qty: 0 });
+          });
+        }
+      }
+
+      if (!out.length) out.push({ animal:"—", qty:0 });
+      return out;
+    }
+
+    function fillDetail(a){
+      const name = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
+      const number = safeText(a.number ?? a.phone ?? a.contact ?? "—");
+      const address = safeText(a.address ?? a.location ?? "—");
+
+      d_name.textContent = name;
+      d_number.textContent = number;
+      d_address.textContent = address;
+
+      const animals = normalizeAnimals(a);
+      d_animals.innerHTML = "";
+      let total = 0;
+
+      animals.forEach(item => {
+        total += (Number(item.qty) || 0);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${safeText(item.animal)}</td><td class="qty">${Number(item.qty) || 0}</td>`;
+        d_animals.appendChild(tr);
+      });
+
+      d_total.textContent = total;
+
+      const datePretty = formatPrettyDate(getApptDateField(a)) || "—";
+      const time = safeText(getApptTimeField(a));
+      d_note.textContent = `THE ANIMALS WILL ARRIVE ON ${datePretty.toUpperCase()} AT ${time}.`;
+
+      selectedDocId = a.docId;
+
+      const st = safeText(a.status).toLowerCase();
+
+      // ✅ show big pill for Completed OR Cancelled, hide buttons
+      if (st === "completed") {
+        statusBanner.textContent = "Appointment Complete!";
+        statusBanner.classList.remove("status-red");
+        statusBanner.classList.add("status-green");
+        statusBannerWrap.style.display = "";
+        detailActions.style.display = "none";
+      } else if (st === "cancelled") {
+        statusBanner.textContent = "Appointment Cancelled!";
+        statusBanner.classList.remove("status-green");
+        statusBanner.classList.add("status-red");
+        statusBannerWrap.style.display = "";
+        detailActions.style.display = "none";
+      } else {
+        statusBannerWrap.style.display = "none";
+        detailActions.style.display = "";
+      }
+
+      // disable buttons if already done
+      cancelBtn.disabled = (st === "cancelled" || st === "completed");
+      completeBtn.disabled = (st === "completed" || st === "cancelled");
+      cancelBtn.style.opacity = cancelBtn.disabled ? .6 : 1;
+      completeBtn.style.opacity = completeBtn.disabled ? .6 : 1;
+    }
+
+    function openDetail(docId){
+      const a = cachedAppointments.find(x => x.docId === docId);
+      if (!a) return;
+      fillDetail(a);
+      setMode("detail");
+    }
+
+    async function setStatus(newStatus){
+  if (!selectedDocId) return;
+
+  try{
+    const newNorm = safeText(newStatus).trim().toLowerCase(); // completed/cancelled/pending...
+
+    await updateDoc(doc(db, "appointments", selectedDocId), {
+      status: newStatus,                 // "Completed" / "Cancelled"
+      bookingStatus: newNorm,            // "completed" / "cancelled"
+      updatedAt: new Date()
+    });
+
+    const idx = cachedAppointments.findIndex(x => x.docId === selectedDocId);
+    if (idx !== -1) {
+      cachedAppointments[idx].status = newStatus;
+      cachedAppointments[idx].bookingStatus = newNorm;
+    }
+
+    renderAppointmentTable();
+    renderTodayTable();
+    await loadTodaySchedules();
+
+    const a = cachedAppointments.find(x => x.docId === selectedDocId);
+    if (a) fillDetail(a);
+
+  }catch(err){
+    console.error(err);
+    alert("Failed to update status. Check Firestore rules.");
+  }
+}
+
+    // ✅ confirmation before updating
+    cancelBtn.addEventListener("click", async () => {
+      if (cancelBtn.disabled) return;
+
+      const ok = await openConfirm({
+        title: "Cancel Appointment",
+        message: "Are you sure you want to mark this appointment as Cancelled?",
+        yesText: "Yes, Cancel",
+        tone: "danger"
+      });
+      if (ok) setStatus("Cancelled");
+    });
+
+    completeBtn.addEventListener("click", async () => {
+      if (completeBtn.disabled) return;
+
+      const ok = await openConfirm({
+        title: "Complete Appointment",
+        message: "Are you sure you want to mark this appointment as Completed?",
+        yesText: "Yes, Complete",
+        tone: "success"
+      });
+      if (ok) setStatus("Completed");
+    });
+
+    // ✅ IMPORTANT: init only after auth is ready (prevents infinite Loading)
+    let started = false;
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/login.html";
+        return;
+      }
+
+      const name = user.displayName || "Admin";
+      const email = user.email || "admin@email.com";
+      adminNameEl.textContent = name;
+      menuNameEl.textContent = name;
+      menuEmailEl.textContent = email;
+
+      if (started) return;
+      started = true;
+
+      try {
+        syncArchivedLabel();
+        setMode("none");
+        await loadAppointments();
+        await loadTodaySchedules();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("todayCards").innerHTML = `<div class="todayEmpty">Error loading schedules.</div>`;
+        document.getElementById("apptBody").innerHTML = `<tr class="emptyRow"><td colspan="8">Error loading appointments.</td></tr>`;
+        document.getElementById("todayBody").innerHTML = `<tr class="emptyRow"><td colspan="8">Error loading appointments.</td></tr>`;
+      }
+    });
+  </script>
+</body>
+</html>

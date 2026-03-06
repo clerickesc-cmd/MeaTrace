@@ -1,0 +1,696 @@
+<!-- ✅ payment.html (FULL PAGE) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment</title>
+
+  <!-- Fonts (EXACT like your pages) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Your existing CSS -->
+  <link rel="stylesheet" href="/dashboard.css" />
+
+  <!-- ✅ Barcode generator -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+  <style>
+    /* ONLY additions for the receipt layout (no font changes, no sidebar rewrite) */
+    .payWrap{ padding: 22px 26px 28px; }
+    .payTitle{
+      margin: 8px 0 18px;
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .receiptGrid{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(260px, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+
+    .receiptCard{
+      background: #d7d7d7;
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    }
+
+    .receiptTop{
+      height: 44px;
+      border-radius: 12px;
+      background: #0f5b27;
+      color: #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 700;
+      letter-spacing: .6px;
+      margin-bottom: 10px;
+    }
+
+    .infoRow{
+      display:grid;
+      grid-template-columns: 118px 1fr;
+      gap: 8px 10px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .infoRow b{ font-weight: 700; color: #111; }
+    .infoRow span{ color:#111; text-align:right; }
+
+    .animalsBox{
+      background:#4a4a4a;
+      border-radius: 12px;
+      padding: 10px 10px 8px;
+      margin: 8px 0 10px;
+      color:#fff;
+    }
+    .animalsHead{
+      display:grid;
+      grid-template-columns: 1fr 60px;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 0 6px 6px;
+      border-bottom: 1px solid rgba(255,255,255,.25);
+      margin-bottom: 6px;
+    }
+    .animalRow{
+      display:grid;
+      grid-template-columns: 1fr 60px;
+      font-size: 12px;
+      padding: 2px 6px;
+      opacity: .95;
+    }
+    .animalsFoot{
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      padding: 6px 6px 0;
+      border-top: 1px solid rgba(255,255,255,.25);
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .fieldRow{
+      display:grid;
+      grid-template-columns: 118px 1fr;
+      gap: 8px 10px;
+      align-items:center;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+    .fieldRow b{ font-weight: 700; }
+
+    .miniInput{
+      width: 100%;
+      height: 20px;
+      border: none;
+      outline: none;
+      background: rgba(0,0,0,.18);
+      border-radius: 2px;
+      padding: 0 6px;
+      font: inherit;
+    }
+
+    .barcodeWrap{
+      display:flex;
+      justify-content:center;
+      margin: 10px 0 6px;
+    }
+    .barcodeSvg{
+      width: 190px;
+      height: 46px;
+      background: #d7d7d7;
+    }
+
+    .payBtns{
+      display:flex;
+      gap: 10px;
+      justify-content:center;
+      margin-top: 8px;
+    }
+    .payBtn{
+      width: 82px;
+      height: 26px;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      font: inherit;
+      font-size: 12px;
+      background: #5a5a5a;
+      color: #fff;
+      opacity: .9;
+    }
+    .payBtn:hover{ opacity: 1; }
+    .payBtn.active{ background: #2c2c2c; opacity: 1; }
+
+    .gridEmpty{
+      opacity: .7;
+      padding: 18px;
+      background: #d7d7d7;
+      border-radius: 14px;
+      text-align:center;
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 1150px){
+      .receiptGrid{ grid-template-columns: repeat(2, minmax(260px, 1fr)); }
+    }
+    @media (max-width: 760px){
+      .receiptGrid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="dash-body">
+  <div class="dash">
+
+    <!-- SIDEBAR (icons same style as your dashboard.html) -->
+    <aside class="dash-sidebar">
+      <div class="dash-logoWrap">
+        <img src="/images/logo.png" class="dash-logo" alt="MeatTrace SCC" />
+      </div>
+
+      <nav class="dash-nav">
+        <a class="dash-link" href="/admin-dashboard.html">
+          <span class="ico" aria-hidden="true">
+            <!-- Home -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Dashboard
+        </a>
+
+        <a class="dash-link" href="/appointment.html" id="appointmentToggle">
+          <span class="ico" aria-hidden="true">
+            <!-- Book -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M8 20h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Appointment
+        </a>
+
+        <a class="dash-link" href="/vet-inspection.html">
+          <span class="ico" aria-hidden="true">
+            <!-- Check -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Vet Inspection
+        </a>
+
+        <a class="dash-link active" href="/payment.html">
+          <span class="ico" aria-hidden="true">
+            <!-- Peso -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2v20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 6.5c0-2-2-3.5-5-3.5S7 4.5 7 6.5 9 10 12 10s5 1.5 5 3.5S15 17 12 17s-5-1.5-5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Payment
+        </a>
+
+        <a class="dash-link" href="/user.html">
+          <span class="ico" aria-hidden="true">
+            <!-- User -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          User
+        </a>
+
+        <a class="dash-link" href="/schedule.html">
+          <span class="ico" aria-hidden="true">
+            <!-- Clock -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Schedule
+        </a>
+
+        <a class="dash-link" href="/notifications.html">
+          <span class="ico" aria-hidden="true">
+            <!-- Edit -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Content
+        </a>
+
+        <a class="dash-link" href="/setting.html">
+          <span class="ico" aria-hidden="true">
+            <!-- Settings -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M19.4 15a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4.8a7.7 7.7 0 0 0-1.7-1L15 2h-6l-.4 2.8a7.7 7.7 0 0 0-1.7 1L4.5 5 2.5 8.5 4.5 10a7.7 7.7 0 0 0 0 4l-2 1.5 2 3.5 2.4-.8a7.7 7.7 0 0 0 1.7 1L9 22h6l.4-2.8a7.7 7.7 0 0 0 1.7-1l2.4.8 2-3.5-2-1.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+      <!-- TOPBAR (same icon style: search + bell + avatar) -->
+      <header class="dash-topbar">
+        <div class="searchbar">
+          <span class="search-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          <input id="searchInput" type="text" placeholder="Search" />
+        </div>
+
+        <div class="top-actions">
+          <button class="iconBtn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="userChip" id="userChip" aria-haspopup="true" aria-expanded="false">
+            <button class="userBtn" id="userBtn" aria-label="Open user menu">
+              <span class="avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span id="adminName">Admin</span>
+              <span class="chev">▾</span>
+            </button>
+
+            <div id="userMenu" class="userMenu" role="menu" aria-hidden="true">
+              <div class="userMenuHead">
+                <div class="uAvatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="uMeta">
+                  <div class="uName" id="menuName">Admin</div>
+                  <div class="uEmail" id="menuEmail">admin@email.com</div>
+                </div>
+              </div>
+
+              <div class="userMenuDivider" role="separator"></div>
+
+              <div class="userMenuFooter">
+                <button id="logoutBtn" class="logoutBtn" type="button">Log out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="payWrap">
+        <h1 class="payTitle">Payment</h1>
+
+        <div id="receiptGrid" class="receiptGrid">
+          <div class="gridEmpty">Loading...</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      getDoc,
+      doc,
+      setDoc,
+      query,
+      orderBy,
+      limit
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0rJ7-NMwC-qDIziAiaH4AtSOOWQnEiqY",
+      authDomain: "meatrace-7e6f0.firebaseapp.com",
+      projectId: "meatrace-7e6f0",
+      storageBucket: "meatrace-7e6f0.firebasestorage.app",
+      messagingSenderId: "713463510875",
+      appId: "1:713463510875:web:d057a91702ee3d11e88c7e",
+      measurementId: "G-4SDSMBNVGN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const apptCol = collection(db, "appointments");
+    const payCol  = collection(db, "payments");
+
+    const safeText = (x) => (x ?? "").toString();
+    const pad2 = (x) => String(x).padStart(2, "0");
+
+    function toYMD(value) {
+      if (!value) return "";
+      if (typeof value === "object" && value.seconds) {
+        const d = new Date(value.seconds * 1000);
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+      }
+      if (typeof value === "string") {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+        const d = new Date(value);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+        }
+      }
+      return "";
+    }
+    function prettyDate(value){
+      const ymd = toYMD(value);
+      if (!ymd) return "";
+      const d = new Date(ymd + "T00:00:00");
+      return d.toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
+    }
+
+    function normalizeAnimals(a){
+      const raw = a.selectedAnimals ?? a.animals ?? a.animalList ?? a.items ?? null;
+
+      if (Array.isArray(raw)) {
+        return raw.map(it => ({
+          name: safeText(it.animal ?? it.name ?? it.type ?? "—"),
+          qty: Number(it.qty ?? it.quantity ?? it.count ?? 0) || 0
+        })).filter(x => x.name && x.name !== "—");
+      }
+
+      if (raw && typeof raw === "object") {
+        return Object.entries(raw).map(([k,v]) => ({
+          name: safeText(k),
+          qty: Number(v || 0) || 0
+        })).filter(x => x.name);
+      }
+
+      const s = safeText(raw).trim();
+      if (!s) return [];
+      const parts = s.split(",").map(x => x.trim()).filter(Boolean);
+
+      const out = [];
+      for (const p of parts){
+        const m1 = p.match(/^(.+?)\s*[:\-]\s*(\d+)\s*$/);
+        if (m1){ out.push({ name: m1[1].trim(), qty: Number(m1[2]) }); continue; }
+
+        const m2 = p.match(/^(.+?)\s*\(\s*(\d+)\s*\)\s*$/);
+        if (m2){ out.push({ name: m2[1].trim(), qty: Number(m2[2]) }); continue; }
+
+        out.push({ name: p, qty: 0 });
+      }
+      return out;
+    }
+    function calcTotalQty(list){
+      return list.reduce((sum, x) => sum + (Number(x.qty)||0), 0);
+    }
+
+    function barcodeValueFrom(id){
+      const str = safeText(id);
+      let h = 0;
+      for (let i=0;i<str.length;i++){
+        h = (h * 31 + str.charCodeAt(i)) >>> 0;
+      }
+      const num = String(h).padStart(10, "0");
+      return ("70" + num).slice(0, 12);
+    }
+    function renderBarcode(svgEl, value){
+      try{
+        JsBarcode(svgEl, value, {
+          format: "CODE128",
+          displayValue: true,
+          font: "monospace",
+          fontSize: 10,
+          height: 34,
+          margin: 0
+        });
+      }catch(e){}
+    }
+
+    // user menu (same behavior as your dashboard)
+    const userChip = document.getElementById("userChip");
+    const userBtn  = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function openUserMenu(open) {
+      userMenu.setAttribute("aria-hidden", String(!open));
+      userChip.setAttribute("aria-expanded", String(open));
+    }
+    userBtn.addEventListener("click", () => {
+      const isOpen = userMenu.getAttribute("aria-hidden") === "false";
+      openUserMenu(!isOpen);
+    });
+    document.addEventListener("click", (e) => {
+      if (!userChip.contains(e.target)) openUserMenu(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") openUserMenu(false);
+    });
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) {}
+      window.location.href = "/login.html";
+    });
+
+    const adminNameEl = document.getElementById("adminName");
+    const menuNameEl = document.getElementById("menuName");
+    const menuEmailEl = document.getElementById("menuEmail");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const name = user.displayName || "Admin";
+        const email = user.email || "admin@email.com";
+        adminNameEl.textContent = name;
+        menuNameEl.textContent = name;
+        menuEmailEl.textContent = email;
+      } else {
+        window.location.href = "/login.html";
+      }
+    });
+
+    async function getPaymentForAppointment(apptId){
+      const ref = doc(db, "payments", apptId);
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+    async function savePayment(apptId, payload){
+      await setDoc(doc(db, "payments", apptId), payload, { merge: true });
+    }
+
+    function receiptHTML({ apptId, name, address, phone, datePretty, timeText, animals, totalQty, payDate, amount, paid, barcodeValue }){
+      const rows = animals.length
+        ? animals.map(a => `
+            <div class="animalRow">
+              <div>${safeText(a.name)}</div>
+              <div style="text-align:right">${Number(a.qty||0) || ""}</div>
+            </div>
+          `).join("")
+        : `<div class="animalRow"><div>—</div><div style="text-align:right">—</div></div>`;
+
+      const paidActive = paid === true ? "active" : "";
+      const unpaidActive = paid === false ? "active" : "";
+
+      return `
+        <div class="receiptCard" data-search="${(name+" "+apptId+" "+phone+" "+address).toLowerCase()}">
+          <div class="receiptTop">PAYMENT RECEIPT</div>
+
+          <div class="infoRow">
+            <b>Name</b><span>${name}</span>
+            <b>Address</b><span>${address}</span>
+            <b>Phone Number</b><span>${phone}</span>
+            <b>Date</b><span>${datePretty}</span>
+            <b>Time</b><span>${timeText}</span>
+          </div>
+
+          <div class="animalsBox">
+            <div class="animalsHead"><div>Animals</div><div style="text-align:right">QTY</div></div>
+            ${rows}
+            <div class="animalsFoot"><span>Total:</span><b>${totalQty}</b></div>
+          </div>
+
+          <div class="fieldRow">
+            <b>Date of Payment</b>
+            <input class="miniInput payDateInput" type="text" placeholder="MM/DD/YYYY" value="${payDate || ""}">
+          </div>
+
+          <div class="fieldRow">
+            <b>Amount</b>
+            <input class="miniInput amountInput" type="text" placeholder="₱" value="${amount || ""}">
+          </div>
+
+          <div class="barcodeWrap">
+            <svg class="barcodeSvg" id="bc_${apptId}"></svg>
+          </div>
+
+          <div class="payBtns">
+            <button class="payBtn paidBtn ${paidActive}" type="button">PAID</button>
+            <button class="payBtn unpaidBtn ${unpaidActive}" type="button">UNPAID</button>
+          </div>
+
+          <div style="display:none" class="meta"
+               data-apptid="${apptId}"
+               data-barcode="${barcodeValue}">
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadReceipts(){
+      const grid = document.getElementById("receiptGrid");
+      grid.innerHTML = `<div class="gridEmpty">Loading...</div>`;
+
+      let snap;
+      try{
+        snap = await getDocs(query(apptCol, orderBy("createdAt", "desc"), limit(30)));
+      }catch(e){
+        snap = await getDocs(query(apptCol, limit(30)));
+      }
+
+      const appts = [];
+      snap.forEach(d => appts.push({ apptId: d.id, ...d.data() }));
+
+      if (appts.length === 0){
+        grid.innerHTML = `<div class="gridEmpty">No appointments found.</div>`;
+        return;
+      }
+
+      let html = "";
+      for (const a of appts){
+        const apptId = a.apptId;
+
+        const name = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
+        const address = safeText(a.address ?? a.location ?? "—");
+        const phone = safeText(a.number ?? a.phone ?? a.contact ?? "—");
+        const datePretty = prettyDate(a.date ?? a.appointmentDate ?? a.scheduleDate ?? a.dateKey) || "—";
+        const timeText = safeText(a.time ?? a.timeSlot ?? "—");
+
+        const animals = normalizeAnimals(a);
+        const totalQty = calcTotalQty(animals);
+
+        const payDoc = await getPaymentForAppointment(apptId);
+        const barcodeValue = (payDoc && payDoc.barcodeValue) ? payDoc.barcodeValue : barcodeValueFrom(apptId);
+
+        const paid = (payDoc && typeof payDoc.paid === "boolean") ? payDoc.paid : null;
+        const payDate = safeText(payDoc?.paymentDate ?? "");
+        const amount = safeText(payDoc?.amount ?? "");
+
+        html += receiptHTML({
+          apptId, name, address, phone, datePretty, timeText,
+          animals, totalQty, payDate, amount,
+          paid, barcodeValue
+        });
+      }
+
+      grid.innerHTML = html;
+
+      // render barcodes
+      appts.forEach(a => {
+        const apptId = a.apptId;
+        const meta = grid.querySelector(`.receiptCard .meta[data-apptid="${apptId}"]`);
+        const bcVal = meta?.dataset?.barcode || barcodeValueFrom(apptId);
+        const svgEl = document.getElementById(`bc_${apptId}`);
+        if (svgEl) renderBarcode(svgEl, bcVal);
+      });
+
+      // PAID / UNPAID handlers
+      grid.querySelectorAll(".receiptCard").forEach(card => {
+        const meta = card.querySelector(".meta");
+        const apptId = meta.dataset.apptid;
+        const barcodeValue = meta.dataset.barcode;
+
+        const paidBtn = card.querySelector(".paidBtn");
+        const unpaidBtn = card.querySelector(".unpaidBtn");
+        const payDateInput = card.querySelector(".payDateInput");
+        const amountInput = card.querySelector(".amountInput");
+
+        async function setStatus(isPaid){
+          paidBtn.classList.toggle("active", isPaid === true);
+          unpaidBtn.classList.toggle("active", isPaid === false);
+
+          const payload = {
+            appointmentId: apptId,
+            paid: isPaid,
+            paymentDate: safeText(payDateInput.value).trim(),
+            amount: safeText(amountInput.value).trim(),
+            barcodeValue,
+            updatedAt: new Date()
+          };
+
+          try{
+            await savePayment(apptId, payload);
+          }catch(err){
+            console.error(err);
+            alert("Failed to save payment. Check Firestore rules.");
+          }
+        }
+
+        paidBtn.addEventListener("click", () => setStatus(true));
+        unpaidBtn.addEventListener("click", () => setStatus(false));
+
+        // autosave fields
+        const saveFields = async () => {
+          const activePaid = paidBtn.classList.contains("active");
+          const activeUnpaid = unpaidBtn.classList.contains("active");
+          const paidState = activePaid ? true : (activeUnpaid ? false : null);
+
+          try{
+            await savePayment(apptId, {
+              appointmentId: apptId,
+              paymentDate: safeText(payDateInput.value).trim(),
+              amount: safeText(amountInput.value).trim(),
+              barcodeValue,
+              ...(paidState === null ? {} : { paid: paidState }),
+              updatedAt: new Date()
+            });
+          }catch(err){ console.error(err); }
+        };
+
+        payDateInput.addEventListener("blur", saveFields);
+        amountInput.addEventListener("blur", saveFields);
+      });
+    }
+
+    // search filter
+    document.getElementById("searchInput").addEventListener("input", () => {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      document.querySelectorAll(".receiptCard").forEach(card => {
+        const hay = card.getAttribute("data-search") || "";
+        card.style.display = hay.includes(q) ? "" : "none";
+      });
+    });
+
+    (async function(){
+      try{
+        await loadReceipts();
+      }catch(err){
+        console.error(err);
+        document.getElementById("receiptGrid").innerHTML =
+          `<div class="gridEmpty">Error loading payment receipts.</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1030 @@
+<!-- ✅ admin-dashboard.html (FULL PAGE) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#e6e6e6;
+      --panel:#cfcfcf;
+      --text:#111;
+      --muted:#666;
+
+      --maroon:#7a0b0b;
+      --maroon2:#4b0707;
+
+      --white:#fff;
+      --radius:18px;
+      --shadow:0 10px 25px rgba(0,0,0,.12);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:"Poppins",sans-serif;
+      background:#111;
+    }
+
+    /* ===== LAYOUT ===== */
+    .dash-body{ background:#111; margin:0; padding:0; }
+    .dash{
+      width:100vw;
+      height:100vh;
+      display:grid;
+      grid-template-columns: 330px 1fr;
+      overflow:hidden;
+    }
+
+    /* ===== LEFT SIDEBAR COLORS (match screenshot) ===== */
+    .dash-sidebar{
+      padding: 18px 18px 22px;
+      color:#fff;
+      background:
+        radial-gradient(900px 520px at 40% 18%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, #8b1111 0%, #6f0c0c 34%, #2a0000 70%, #0a0a0a 100%);
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .dash-logoWrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 6px 0 10px;
+    }
+    .dash-logo{
+      width: 165px;
+      height: 165px;
+      object-fit:contain;
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,.35));
+    }
+
+    .dash-nav{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      padding: 6px 6px 0;
+    }
+
+    .dash-link{
+      display:flex;
+      align-items:center;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 999px;
+      color:#fff;
+      text-decoration:none;
+      font-size: 22px;
+      line-height:1;
+      opacity:.95;
+      user-select:none;
+    }
+    .dash-link:hover{ opacity:1; }
+    .dash-link .ico{
+      width: 28px; height: 28px;
+      display:inline-flex; align-items:center; justify-content:center;
+      flex:0 0 28px;
+    }
+    .dash-link .ico svg{ width:28px; height:28px; display:block; }
+
+    .dash-link.active{
+      background: rgba(255,255,255,.92);
+      color:#111;
+      opacity:1;
+      box-shadow: 0 10px 18px rgba(0,0,0,.18);
+    }
+    .dash-link.active .ico{ color:#111; }
+
+    /* ===== MAIN AREA ===== */
+    .dash-main{
+      background: var(--bg);
+      padding: 18px 22px 22px;
+      overflow:auto;
+    }
+
+    /* TOPBAR */
+    .dash-topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 18px;
+      margin-bottom: 10px;
+    }
+
+    .searchbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background: #dcdcdc;
+      border-radius: 999px;
+      padding: 10px 14px;
+      width: min(620px, 62vw);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .search-ico{ width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; color:#555; opacity:.9; }
+    .search-ico svg{ width:18px; height:18px; }
+    .searchbar input{
+      border:none;
+      outline:none;
+      background:transparent;
+      width:100%;
+      font: 500 14px/1 "Poppins",sans-serif;
+      color:#111;
+    }
+
+    .top-actions{ display:flex; align-items:center; gap: 14px; }
+    .iconBtn{
+      width: 40px; height: 40px;
+      border-radius: 999px;
+      border:none;
+      background: transparent;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      color:#111;
+    }
+    .iconBtn svg{ width:22px; height:22px; }
+    .iconBtn:hover{ background: rgba(0,0,0,.06); }
+
+    .userChip{ position:relative; }
+    .userBtn{
+      border:none;
+      background: transparent;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      padding: 8px 10px;
+      border-radius: 12px;
+      color:#111;
+      font: 600 14px/1 "Poppins",sans-serif;
+    }
+    .userBtn:hover{ background: rgba(0,0,0,.06); }
+    .avatar{
+      width: 34px; height: 34px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.08);
+      display:grid; place-items:center;
+    }
+    .avatar svg{ width:20px; height:20px; }
+    .userMenu{
+      position:absolute;
+      right:0;
+      top: 48px;
+      width: 260px;
+      background:#fff;
+      border-radius: 14px;
+      box-shadow: 0 18px 35px rgba(0,0,0,.18);
+      padding: 10px;
+      z-index: 10;
+    }
+    .userMenu[aria-hidden="true"]{ display:none; }
+    .userMenuHead{ display:flex; gap:10px; align-items:center; padding: 8px; }
+    .uAvatar{
+      width:44px;height:44px;border-radius:999px;
+      background: rgba(0,0,0,.08);
+      display:grid;place-items:center;
+    }
+    .uAvatar svg{ width:22px;height:22px; }
+    .uMeta{ display:flex; flex-direction:column; gap:2px; }
+    .uName{ font-weight:700; font-size:14px; color:#111; }
+    .uEmail{ font-weight:500; font-size:12px; color:#666; }
+    .userMenuDivider{ height:1px; background: rgba(0,0,0,.08); margin: 6px 0; }
+    .userMenuFooter{ padding: 6px 8px 8px; }
+    .logoutBtn{
+      width:100%;
+      border:none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: var(--maroon);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .logoutBtn:hover{ background: var(--maroon2); }
+
+    /* TITLE */
+    .dash-title{
+      margin: 8px 0 12px;
+      font-size: 34px;
+      font-weight: 700;
+      color:#111;
+    }
+
+    /* ===== CONTENT ===== */
+    .dash-grid{ display:flex; flex-direction:column; gap: 18px; }
+
+    /* ✅ three top boxes are totals */
+    .miniRow{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      height: 118px;
+    }
+    .miniCard{
+      border-radius: 18px;
+      background: #cfcfcf;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+      padding: 16px 18px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+    .statLabel{
+      font-size: 14px;
+      font-weight: 600;
+      color:#333;
+      margin-bottom: 6px;
+    }
+    .statValue{
+      font-size: 34px;
+      font-weight: 800;
+      color:#111;
+      line-height: 1;
+    }
+
+    /* middle row: big panel + today schedules */
+    .mid-row{
+      display:grid;
+      grid-template-columns: 1fr 260px;
+      gap: 16px;
+      align-items:stretch;
+    }
+
+    .bigPanel{
+      background: transparent;
+      border-radius: 18px;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+      min-height: 420px;
+    }
+
+    .bigGrey{
+      flex:1;
+      border-radius: 18px;
+      background: #cfcfcf;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+      overflow:hidden;
+      position:relative;
+    }
+    .chartWrap{ width:100%; height:100%; padding: 12px; }
+    .chartTitle{
+      margin:0 0 8px 0;
+      font-weight:700;
+      font-size: 14px;
+      color:#222;
+      opacity:.85;
+    }
+    #apptChart{
+      width: 100% !important;
+      height: calc(100% - 26px) !important;
+      display:block;
+    }
+    .chartEmpty{ padding:16px; opacity:.75; }
+
+    /* RIGHT: Today schedules */
+    .todayCard{
+      border-radius: 18px;
+      background: var(--maroon);
+      color:#fff;
+      overflow:hidden;
+      box-shadow: 0 14px 26px rgba(0,0,0,.16);
+      display:flex;
+      flex-direction:column;
+      height: 420px;
+    }
+    .todayHead{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      font-weight:700;
+      border-bottom: 1px solid rgba(255,255,255,.18);
+    }
+    .todayIco{ width: 18px; height:18px; display:inline-flex; align-items:center; justify-content:center; }
+    .todayIco svg{ width:18px; height:18px; }
+    .todayBody{ padding: 10px 12px; overflow:auto; flex:1; }
+    .todayEmpty{ font-size: 12px; font-weight:600; opacity:.95; }
+
+    /* ✅ RECENT APPOINTMENT */
+    .recentWrap{ margin-top: 4px; width: 100%; }
+    .recentTitle{
+      margin: 0 0 10px;
+      font-size: 28px;
+      font-weight: 700;
+      color:#111;
+    }
+    .tableCard{
+      border-radius: 18px;
+      overflow:hidden;
+      background:#cfcfcf;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+      width: 100%;
+    }
+    .apptTable{
+      width:100%;
+      border-collapse:collapse;
+      table-layout:fixed;
+    }
+    .apptTable thead th{
+      background: #8b1111;
+      color:#fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 10px 10px;
+      text-align:left;
+      white-space:nowrap;
+    }
+    .apptTable tbody td{
+      font-size: 12px;
+      padding: 10px 10px;
+      border-top: 1px solid rgba(0,0,0,.12);
+      color:#111;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .emptyRow td{ text-align:center; color:#444; }
+
+    /* ✅ Pending dropdown EXACT look in your screenshot */
+    .statusSelect{
+      font: inherit;
+      font-size: 12px;
+      background: #d9d9d9;                /* grey like screenshot */
+      color:#111;
+      border: 1px solid rgba(0,0,0,.35);  /* thin border */
+      border-radius: 2px;
+      height: 22px;
+      padding: 1px 22px 1px 6px;
+      line-height: 1.2;
+      cursor: pointer;
+      appearance: auto;                   /* keep native arrow and list */
+    }
+    .statusSelect:focus{
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0,0,0,.08);
+    }
+
+    .tableFooter{
+      padding: 10px 14px 14px;
+      display:flex;
+      justify-content:flex-end;
+    }
+    .viewAll{
+      color:#111;
+      text-decoration:none;
+      font-weight:600;
+      font-size: 12px;
+    }
+    .viewAll:hover{ text-decoration:underline; }
+
+    @media (max-width: 1100px){
+      .dash{ grid-template-columns: 300px 1fr; }
+      .mid-row{ grid-template-columns: 1fr; }
+      .todayCard{ height: 260px; }
+    }
+  </style>
+</head>
+
+<body class="dash-body">
+  <div class="dash">
+
+    <!-- SIDEBAR -->
+    <aside class="dash-sidebar">
+      <div class="dash-logoWrap">
+        <img src="/images/logo.png" class="dash-logo" alt="MeatTrace SCC" />
+      </div>
+
+      <nav class="dash-nav">
+        <a class="dash-link active" href="/admin-dashboard.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Dashboard
+        </a>
+
+        <a class="dash-link" href="/appointment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M8 20h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Appointment
+        </a>
+
+        <a class="dash-link" href="/vet-inspection.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Vet Inspection
+        </a>
+
+        <a class="dash-link" href="/payment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2v20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 6.5c0-2-2-3.5-5-3.5S7 4.5 7 6.5 9 10 12 10s5 1.5 5 3.5S15 17 12 17s-5-1.5-5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Payment
+        </a>
+
+        <a class="dash-link" href="/user.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          User
+        </a>
+
+        <a class="dash-link" href="/schedule.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Schedule
+        </a>
+
+        <a class="dash-link" href="/notifications.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Notifications
+        </a>
+
+        <a class="dash-link" href="/setting.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M19.4 15a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4.8a7.7 7.7 0 0 0-1.7-1L15 2h-6l-.4 2.8a7.7 7.7 0 0 0-1.7 1L4.5 5 2.5 8.5 4.5 10a7.7 7.7 0 0 0 0 4l-2 1.5 2 3.5 2.4-.8a7.7 7.7 0 0 0 1.7 1L9 22h6l.4-2.8a7.7 7.7 0 0 0 1.7-1l2.4.8 2-3.5-2-1.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+      <!-- TOPBAR -->
+      <header class="dash-topbar">
+        <div class="searchbar">
+          <span class="search-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          <input id="searchInput" type="text" placeholder="Search" />
+        </div>
+
+        <div class="top-actions">
+          <button class="iconBtn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="userChip" id="userChip" aria-haspopup="true" aria-expanded="false">
+            <button class="userBtn" id="userBtn" aria-label="Open user menu">
+              <span class="avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span id="adminName">Admin</span>
+              <span class="chev">▾</span>
+            </button>
+
+            <div id="userMenu" class="userMenu" role="menu" aria-hidden="true">
+              <div class="userMenuHead">
+                <div class="uAvatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="uMeta">
+                  <div class="uName" id="menuName">Admin</div>
+                  <div class="uEmail" id="menuEmail">admin@email.com</div>
+                </div>
+              </div>
+
+              <div class="userMenuDivider" role="separator"></div>
+
+              <div class="userMenuFooter">
+                <button id="logoutBtn" class="logoutBtn" type="button">Log out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <h1 class="dash-title">Dashboard</h1>
+
+      <section class="dash-grid">
+        <div class="mid-row">
+          <div class="bigPanel">
+
+            <!-- ✅ top three totals -->
+            <div class="miniRow">
+              <div class="miniCard">
+                <div class="statLabel">Total Users</div>
+                <div class="statValue" id="totalUsers">0</div>
+              </div>
+
+              <div class="miniCard" id="apptCard" role="link" tabindex="0" style="cursor:pointer">
+                <div class="statLabel">Total Appointment</div>
+                <div class="statValue" id="totalAppointments">0</div>
+              </div>
+
+              <div class="miniCard">
+                <div class="statLabel">Total Payment</div>
+                <div class="statValue" id="totalPayment">₱0</div>
+              </div>
+            </div>
+
+            <!-- big grey panel -->
+            <div class="bigGrey">
+              <div class="chartWrap">
+                <p class="chartTitle"></p>
+                <canvas id="apptChart" aria-label="Appointments per week chart" role="img"></canvas>
+                <div id="chartEmpty" class="chartEmpty" style="display:none;">No appointment data for chart.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Today -->
+          <aside class="todayCard" id="todayCard" role="link" tabindex="0" style="cursor:pointer">
+            <div class="todayHead">
+              <span class="todayIco" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M7 2v3M17 2v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M3 8h18" stroke="currentColor" stroke-width="2"/>
+                  <path d="M5 5h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span>Today’s Schedules</span>
+            </div>
+
+            <div class="todayBody" id="todayList">
+              <div class="todayEmpty">No Schedules Found</div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- ✅ Recent Appointment -->
+        <div class="recentWrap">
+          <h2 class="recentTitle">Recent Appointment</h2>
+
+          <div class="tableCard">
+            <table class="apptTable">
+              <thead>
+                <tr>
+                  <th style="width:70px">ID No.</th>
+                  <th style="width:140px">Name</th>
+                  <th style="width:190px">Address</th>
+                  <th style="width:120px">Number</th>
+                  <th style="width:110px">Date</th>
+                  <th style="width:90px">Time</th>
+                  <th style="width:150px">Selected Animals</th>
+                  <th style="width:90px">Status</th>
+                </tr>
+              </thead>
+              <tbody id="recentBody">
+                <tr class="emptyRow">
+                  <td colspan="8">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="tableFooter">
+              <a class="viewAll" href="/appointment.html">View All...</a>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore, collection, getCountFromServer, getDocs,
+      query, orderBy, limit, where, doc, updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0rJ7-NMwC-qDIziAiaH4AtSOOWQnEiqY",
+      authDomain: "meatrace-7e6f0.firebaseapp.com",
+      projectId: "meatrace-7e6f0",
+      storageBucket: "meatrace-7e6f0.firebasestorage.app",
+      messagingSenderId: "713463510875",
+      appId: "1:713463510875:web:d057a91702ee3d11e88c7e",
+      measurementId: "G-4SDSMBNVGN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const usersCol = collection(db, "users");
+    const apptCol  = collection(db, "appointments");
+    const payCol   = collection(db, "payments");
+
+    const pad2 = (x) => String(x).padStart(2, "0");
+    const safeText = (x) => (x ?? "").toString();
+    const norm = (v) => safeText(v).trim().toLowerCase();
+    const peso = (n) => "₱" + (Number(n || 0)).toLocaleString("en-PH", { minimumFractionDigits: 0 });
+
+    const todayKey = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    };
+
+    function toYMD(value) {
+      if (!value) return "";
+      if (typeof value === "object" && value.seconds) {
+        const d = new Date(value.seconds * 1000);
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+      }
+      if (typeof value === "string") {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+        const d = new Date(value);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+        }
+      }
+      return "";
+    }
+
+    function formatPrettyDate(value) {
+      const ymd = toYMD(value);
+      if (!ymd) return "";
+      const d = new Date(ymd + "T00:00:00");
+      return d.toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
+    }
+
+    // ✅ clickable Total Appointment
+    const apptCard = document.getElementById("apptCard");
+    if (apptCard) {
+      apptCard.addEventListener("click", () => (window.location.href = "/appointment.html"));
+      apptCard.addEventListener("keydown", (e) => { if (e.key === "Enter") window.location.href = "/appointment.html"; });
+    }
+
+    // ✅ clickable Today's Schedules
+    const todayCard = document.getElementById("todayCard");
+    if (todayCard) {
+      todayCard.addEventListener("click", () => (window.location.href = "/appointment.html"));
+      todayCard.addEventListener("keydown", (e) => { if (e.key === "Enter") window.location.href = "/appointment.html"; });
+    }
+
+    // user menu
+    const userChip = document.getElementById("userChip");
+    const userBtn  = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function openUserMenu(open) {
+      userMenu.setAttribute("aria-hidden", String(!open));
+      userChip.setAttribute("aria-expanded", String(open));
+    }
+    userBtn.addEventListener("click", () => {
+      const isOpen = userMenu.getAttribute("aria-hidden") === "false";
+      openUserMenu(!isOpen);
+    });
+    document.addEventListener("click", (e) => { if (!userChip.contains(e.target)) openUserMenu(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") openUserMenu(false); });
+
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) {}
+      window.location.href = "/admin-login-form.html";
+    });
+
+    const adminNameEl = document.getElementById("adminName");
+    const menuNameEl = document.getElementById("menuName");
+    const menuEmailEl = document.getElementById("menuEmail");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const name = user.displayName || "Admin";
+        const email = user.email || "admin@email.com";
+        adminNameEl.textContent = name;
+        menuNameEl.textContent = name;
+        menuEmailEl.textContent = email;
+      } else {
+        window.location.href = "/admin-login-form.html";
+      }
+    });
+
+    async function loadTotals() {
+      const usersSnap = await getCountFromServer(usersCol);
+      document.getElementById("totalUsers").textContent = usersSnap.data().count;
+
+      const apptSnap = await getCountFromServer(apptCol);
+      document.getElementById("totalAppointments").textContent = apptSnap.data().count;
+
+      const pays = await getDocs(payCol);
+      let total = 0;
+      pays.forEach(docu => {
+        const data = docu.data();
+        total += Number(data.amount ?? data.total ?? data.paymentAmount ?? 0);
+      });
+      document.getElementById("totalPayment").textContent = peso(total);
+    }
+
+    async function loadTodaySchedules() {
+      const wrap = document.getElementById("todayList");
+      wrap.innerHTML = "";
+
+      const tKey = todayKey();
+      let docsArr = [];
+
+      try {
+        const q1 = query(apptCol, where("dateKey", "==", tKey));
+        const s1 = await getDocs(q1);
+        s1.forEach(d => docsArr.push({ id: d.id, ...d.data() }));
+      } catch (e) {}
+
+      if (docsArr.length === 0) {
+        let s2;
+        try { s2 = await getDocs(query(apptCol, orderBy("createdAt", "desc"), limit(80))); }
+        catch (e) { s2 = await getDocs(query(apptCol, limit(80))); }
+
+        s2.forEach(d => docsArr.push({ id: d.id, ...d.data() }));
+        docsArr = docsArr.filter(a => {
+          const d = a.date ?? a.appointmentDate ?? a.scheduleDate ?? a.dateKey;
+          return toYMD(d) === tKey;
+        });
+      }
+
+      if (docsArr.length === 0) {
+        wrap.innerHTML = `<div class="todayEmpty">No Schedules Found</div>`;
+        return;
+      }
+
+      docsArr
+        .sort((a,b) => safeText(a.time ?? a.timeSlot ?? "").localeCompare(safeText(b.time ?? b.timeSlot ?? "")))
+        .forEach(a => {
+          const name = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
+          const time = safeText(a.time ?? a.timeSlot ?? "—");
+
+          const item = document.createElement("div");
+          item.style.padding = "8px 0";
+          item.style.borderBottom = "1px solid rgba(255,255,255,.14)";
+          item.style.cursor = "pointer";
+          item.innerHTML = `<div style="font-weight:700; font-size:12px">${name}</div>
+                            <div style="font-weight:600; font-size:12px; opacity:.95">${time}</div>`;
+          item.addEventListener("click", () => (window.location.href = "/appointment.html"));
+          wrap.appendChild(item);
+        });
+    }
+
+    async function updateAppointmentStatus(docId, newStatusLabel){
+      const newNorm = norm(newStatusLabel);
+      await updateDoc(doc(db, "appointments", docId), {
+        status: newStatusLabel,
+        bookingStatus: newNorm,
+        updatedAt: new Date()
+      });
+    }
+
+    const STATUS_OPTIONS = [
+      "Pending",
+      "Vet Checking",
+      "In Process",
+      "Ready for Pickup",
+      "Payment Pending",
+      "Payment Received",
+      "Done"
+    ];
+
+    function isPendingStatus(a){
+      const v = norm(a.bookingStatus || a.status || "");
+      return v === "pending" || v === "";
+    }
+
+    async function loadRecentAppointments() {
+      const tbody = document.getElementById("recentBody");
+      tbody.innerHTML = "";
+
+      let snap;
+      try { snap = await getDocs(query(apptCol, orderBy("createdAt", "desc"), limit(4))); }
+      catch (e) { snap = await getDocs(query(apptCol, limit(4))); }
+
+      const rows = [];
+      snap.forEach(d => rows.push({ docId: d.id, ...d.data() }));
+
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr class="emptyRow"><td colspan="8">No appointments yet.</td></tr>`;
+        return;
+      }
+
+      rows.forEach((a) => {
+        const idNo = safeText(a.idNo ?? a.idNumber ?? a.ticketId ?? a.docId);
+        const name = safeText(a.name ?? a.fullName ?? a.customerName);
+        const address = safeText(a.address ?? a.location ?? "—");
+        const number = safeText(a.number ?? a.phone ?? a.contact ?? "—");
+        const datePretty = formatPrettyDate(a.date ?? a.appointmentDate ?? a.scheduleDate ?? a.dateKey);
+        const time = safeText(a.time ?? a.timeSlot ?? "—");
+        const animals = safeText(a.selectedAnimals ?? a.animals ?? "—");
+
+        const currentLabel = safeText(a.status) || "Pending";
+        const pending = isPendingStatus(a);
+
+        const statusCell = pending
+          ? `<select class="statusSelect" data-docid="${a.docId}" aria-label="Status">
+               ${STATUS_OPTIONS.map(opt => `<option value="${opt}" ${opt===currentLabel ? "selected" : ""}>${opt}</option>`).join("")}
+             </select>`
+          : `<span>${currentLabel}</span>`;
+
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+        tr.setAttribute("tabindex", "0");
+        tr.setAttribute("role", "link");
+
+        tr.innerHTML = `
+          <td>${idNo || "—"}</td>
+          <td>${name || "—"}</td>
+          <td>${address}</td>
+          <td>${number}</td>
+          <td>${datePretty || "—"}</td>
+          <td>${time}</td>
+          <td>${animals}</td>
+          <td>${statusCell}</td>
+        `;
+
+        tr.addEventListener("click", (e) => {
+          if (e.target && e.target.closest && e.target.closest("select.statusSelect")) return;
+          window.location.href = "/appointment.html";
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      // ✅ dropdown is clickable; doesn't trigger row redirect; saves to Firestore
+      tbody.querySelectorAll("select.statusSelect").forEach(sel => {
+        sel.addEventListener("mousedown", (e) => e.stopPropagation());
+        sel.addEventListener("click", (e) => e.stopPropagation());
+        sel.addEventListener("keydown", (e) => e.stopPropagation());
+
+        sel.addEventListener("change", async (e) => {
+          e.stopPropagation();
+          const docId = sel.dataset.docid;
+          const newStatus = sel.value;
+          try{
+            await updateAppointmentStatus(docId, newStatus);
+          }catch(err){
+            console.error(err);
+            alert("Failed to update status. Check Firestore rules.");
+          }
+        });
+      });
+    }
+
+    // chart (optional)
+    let apptChartInstance = null;
+
+    function getDateFromAppointment(a){
+      const d = a.date ?? a.appointmentDate ?? a.scheduleDate ?? a.dateKey;
+      const ymd = toYMD(d);
+      if (ymd) return new Date(ymd + "T00:00:00");
+      const c = a.createdAt;
+      if (c && typeof c === "object" && c.seconds) return new Date(c.seconds * 1000);
+      if (typeof c === "string") {
+        const dd = new Date(c);
+        if (!isNaN(dd.getTime())) return dd;
+      }
+      return null;
+    }
+    function weekStart(d){
+      const x = new Date(d);
+      x.setHours(0,0,0,0);
+      const day = x.getDay();
+      const diff = (day === 0 ? -6 : 1) - day;
+      x.setDate(x.getDate() + diff);
+      return x;
+    }
+    function fmtLabel(d){ return d.toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
+
+    async function loadWeeklyAppointmentsChart() {
+      const emptyEl = document.getElementById("chartEmpty");
+      const canvas = document.getElementById("apptChart");
+      if (!canvas || !window.Chart) return;
+
+      let snap;
+      try{ snap = await getDocs(query(apptCol, orderBy("createdAt", "desc"), limit(300))); }
+      catch(e){ snap = await getDocs(query(apptCol, limit(300))); }
+
+      const appts = [];
+      snap.forEach(d => appts.push({ id: d.id, ...d.data() }));
+      if (appts.length === 0) {
+        emptyEl.style.display = "block";
+        if (apptChartInstance) { apptChartInstance.destroy(); apptChartInstance = null; }
+        return;
+      }
+
+      const WEEKS = 10;
+      const now = new Date();
+      const currentWeek = weekStart(now);
+
+      const buckets = new Map();
+      for (let i = WEEKS - 1; i >= 0; i--) {
+        const ws = new Date(currentWeek);
+        ws.setDate(ws.getDate() - (i * 7));
+        buckets.set(ws.getTime(), 0);
+      }
+
+      appts.forEach(a => {
+        const d = getDateFromAppointment(a);
+        if (!d) return;
+        const ws = weekStart(d).getTime();
+        if (buckets.has(ws)) buckets.set(ws, (buckets.get(ws) || 0) + 1);
+      });
+
+      const weekTimes = Array.from(buckets.keys()).sort((a,b) => a-b);
+      const labels = weekTimes.map(t => fmtLabel(new Date(t)));
+      const data = weekTimes.map(t => buckets.get(t) || 0);
+
+      emptyEl.style.display = data.every(v => v === 0) ? "block" : "none";
+      if (apptChartInstance) apptChartInstance.destroy();
+
+      apptChartInstance = new Chart(canvas, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: "Appointments",
+            data,
+            tension: 0.35,
+            fill: true,
+            pointRadius: 3,
+            pointHoverRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+    }
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#recentBody tr");
+      rows.forEach(r => {
+        const txt = r.innerText.toLowerCase();
+        r.style.display = txt.includes(q) ? "" : "none";
+      });
+    });
+
+    (async function init() {
+      try {
+        await loadTotals();
+        await loadTodaySchedules();
+        await loadRecentAppointments();
+        await loadWeeklyAppointmentsChart();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("todayList").innerHTML = `<div class="todayEmpty">Error loading schedules.</div>`;
+        document.getElementById("recentBody").innerHTML = `<tr class="emptyRow"><td colspan="8">Error loading appointments.</td></tr>`;
+        const emptyEl = document.getElementById("chartEmpty");
+        if (emptyEl) { emptyEl.style.display = "block"; emptyEl.textContent = "Error loading chart."; }
+      }
+    })();
+  </script>
+</body>
+</html>

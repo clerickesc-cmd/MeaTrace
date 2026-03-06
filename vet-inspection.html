@@ -1,0 +1,871 @@
+<!-- ✅ vet-inspection.html (FULL PAGE) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vet Inspection</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Your main dashboard css -->
+  <link rel="stylesheet" href="/dashboard.css" />
+
+  <style>
+    .dash-link .ico { width: 22px; height: 22px; display:inline-flex; align-items:center; justify-content:center; }
+    .dash-link .ico svg { width: 22px; height: 22px; display:block; }
+
+    /* PAGE */
+    .pageTitle{
+      font-size:32px;
+      font-weight:700;
+      margin: 18px 0 12px;
+    }
+
+    /* top-right filter pills */
+    .filterPills{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      margin-top: 6px;
+    }
+    .filterPill{
+      border:none;
+      background:#d7d7d7;
+      color:#111;
+      font-family:inherit;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      opacity:.9;
+    }
+    .filterPill.active{
+      opacity:1;
+      font-weight:600;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+    }
+    .filterPill svg{width:14px;height:14px;}
+
+    /* cards grid like screenshot */
+    .cardsRow{
+      display:flex;
+      gap:26px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      margin-top: 6px;
+    }
+
+    .vetCard{
+      width: 300px;
+      background:#d9d9d9;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+
+    .vetCardHead{
+      background:#7a0f0f;
+      color:#fff;
+      font-weight:700;
+      font-size:14px;
+      padding:10px 12px;
+      text-align:center;
+    }
+
+    .vetCardBody{
+      padding:12px 14px 10px;
+      font-size:12px;
+      color:#111;
+    }
+
+    .metaRow{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin:6px 0;
+    }
+    .metaLabel{ font-weight:700; }
+    .metaValue{ text-align:right; opacity:.95; }
+
+    /* animals box */
+    .animalsBox{
+      background:#3f3f3f;
+      color:#fff;
+      border-radius:10px;
+      padding:10px 12px;
+      margin-top:10px;
+      font-size:12px;
+    }
+    .animalsHead{
+      display:flex;
+      justify-content:space-between;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    .animalsRow{
+      display:flex;
+      justify-content:space-between;
+      margin:4px 0;
+      opacity:.95;
+    }
+    .animalsDivider{
+      height:1px;
+      background:rgba(255,255,255,.35);
+      margin:8px 0 6px;
+    }
+    .animalsTotal{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      font-weight:700;
+    }
+
+    /* buttons row */
+    .vetActions{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:10px;
+      padding-bottom: 6px;
+    }
+    .vetBtn{
+      border:none;
+      border-radius:0;            /* screenshot looks squared */
+      padding:4px 10px;
+      font-family:inherit;
+      font-size:11px;
+      cursor:pointer;
+      color:#fff;
+      min-width: 78px;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .btnReject{ background:#7a0f0f; }
+    .btnPass{ background:#0f6b3a; }
+
+    /* status badge shown on cards after action (optional, nice) */
+    .cardStatus{
+      margin-top:8px;
+      display:flex;
+      justify-content:center;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      opacity:.9;
+    }
+    .statusRejected{ color:#7a0f0f; }
+    .statusPassed{ color:#0f6b3a; }
+
+    /* Topbar: ensure userMenu always above */
+    .userMenu{ z-index:9999; }
+
+    .emptyMsg{
+      margin-top: 14px;
+      background:#d9d9d9;
+      border-radius:12px;
+      padding:14px;
+      font-size:13px;
+      opacity:.9;
+    }
+
+    /* ✅ ONLY CHANGED: CONFIRMATION MODAL EXACT LIKE YOUR SCREENSHOT */
+    .confirmOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.25);
+      z-index:99999;
+      padding:18px;
+    }
+    .confirmOverlay.show{ display:flex; }
+
+    .confirmBox{
+      width: 520px;
+      max-width: 92vw;
+      background:#fff;
+      border-radius:8px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.2);
+    }
+
+    .confirmTitle{
+      padding:14px 16px 6px;
+      font-size:22px;
+      font-weight:700;
+      text-align:center;
+      color:#111;
+    }
+
+    .confirmDivider{
+      height:1px;
+      background:#d7d7d7;
+      margin: 0 12px;
+    }
+
+    .confirmBody{
+      padding:14px 18px 12px;
+      font-size:16px;
+      line-height:1.35;
+      text-align:center;
+      color:#111;
+    }
+    .confirmBody b{ font-weight:700; }
+
+    .confirmActions{
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      padding: 10px 0 16px;
+    }
+
+    .cBtn{
+      border:none;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:16px;
+      padding:8px 18px;
+      border-radius:0;
+      min-width: 110px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
+    }
+    .cBtnCancel{ background:#d9d9d9; color:#111; }
+    .cBtnPass{ background:#2e7d32; color:#fff; box-shadow:none; }
+    .cBtnReject{ background:#7a0f0f; color:#fff; box-shadow:none; }
+  </style>
+</head>
+
+<body class="dash-body">
+  <div class="dash">
+
+    <!-- SIDEBAR -->
+    <aside class="dash-sidebar">
+      <div class="dash-logoWrap">
+        <img src="/images/logo.png" class="dash-logo" alt="MeatTrace SCC" />
+      </div>
+
+      <nav class="dash-nav">
+        <a class="dash-link" href="/admin-dashboard.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Dashboard
+        </a>
+
+        <a class="dash-link" href="/appointment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 4h12a2 2 0 0 1 2 2v14H8a2 2 0 0 0-2 2V4Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M8 20h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Appointment
+        </a>
+
+        <a class="dash-link active" href="/vet-inspection.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M22 11.1V12a10 10 0 1 1-5.93-9.14"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M22 4 12 14l-3-3"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Vet Inspection
+        </a>
+
+        <a class="dash-link" href="/payment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2v20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 6.5c0-2-2-3.5-5-3.5S7 4.5 7 6.5 9 10 12 10s5 1.5 5 3.5S15 17 12 17s-5-1.5-5-3.5"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Payment
+        </a>
+
+        <a class="dash-link" href="/user.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"
+                stroke="currentColor" stroke-width="2"/>
+              <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          User
+        </a>
+
+        <a class="dash-link" href="/schedule.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20Z"
+                stroke="currentColor" stroke-width="2"/>
+              <path d="M12 6v6l4 2"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Schedule
+        </a>
+
+        <a class="dash-link" href="/notifications.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M16.5 3.5a2.1 2 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Content
+        </a>
+
+        <a class="dash-link" href="/setting.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+                stroke="currentColor" stroke-width="2"/>
+              <path d="M19.4 15a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4.8a7.7 7.7 0 0 0-1.7-1L15 2h-6l-.4 2.8a7.7 7.7 0 0 0-1.7 1L4.5 5 2.5 8.5 4.5 10a7.7 7.7 0 0 0 0 4l-2 1.5 2 3.5 2.4-.8a7.7 7.7 0 0 0 1.7 1L9 22h6l.4-2.8a7.7 7.7 0 0 0 1.7-1l2.4.8 2-3.5-2-1.5Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+      <!-- TOPBAR -->
+      <header class="dash-topbar">
+        <div class="searchbar">
+          <span class="search-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          <input id="searchInput" type="text" placeholder="Search" />
+        </div>
+
+        <div class="top-actions">
+          <button class="iconBtn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="userChip" id="userChip" aria-haspopup="true" aria-expanded="false">
+            <button class="userBtn" id="userBtn" aria-label="Open user menu" type="button">
+              <span class="avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span id="adminName">Admin</span>
+              <span class="chev">▾</span>
+            </button>
+
+            <div id="userMenu" class="userMenu" role="menu" aria-hidden="true">
+              <div class="userMenuHead">
+                <div class="uAvatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="uMeta">
+                  <div class="uName" id="menuName">Admin</div>
+                  <div class="uEmail" id="menuEmail">admin@email.com</div>
+                </div>
+              </div>
+
+              <div class="userMenuDivider" role="separator"></div>
+
+              <div class="userMenuFooter">
+                <button id="logoutBtn" class="logoutBtn" type="button">Log out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px;">
+        <h1 class="pageTitle">Vet Inspection</h1>
+
+        <div class="filterPills" aria-label="Vet inspection filter">
+          <button id="pillRejected" class="filterPill" type="button" data-filter="Rejected">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Rejected
+          </button>
+
+          <button id="pillPassed" class="filterPill" type="button" data-filter="Passed">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Passed
+          </button>
+        </div>
+      </div>
+
+      <div id="cardsRow" class="cardsRow" aria-live="polite"></div>
+      <div id="emptyMsg" class="emptyMsg" style="display:none;">No appointments for vet inspection.</div>
+    </main>
+  </div>
+
+  <!-- ✅ ONLY CHANGED: CONFIRMATION HTML (SCREENSHOT STYLE) -->
+  <div id="confirmOverlay" class="confirmOverlay" aria-hidden="true">
+    <div class="confirmBox" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmBody">
+      <div id="confirmTitle" class="confirmTitle">Animal Inspection Result</div>
+      <div class="confirmDivider"></div>
+      <div id="confirmBody" class="confirmBody"></div>
+      <div class="confirmActions">
+        <button id="confirmPrimary" class="cBtn cBtnPass" type="button">PASSED</button>
+        <button id="confirmCancel" class="cBtn cBtnCancel" type="button">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      orderBy,
+      limit,
+      doc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0rJ7-NMwC-qDIziAiaH4AtSOOWQnEiqY",
+      authDomain: "meatrace-7e6f0.firebaseapp.com",
+      projectId: "meatrace-7e6f0",
+      storageBucket: "meatrace-7e6f0.firebasestorage.app",
+      messagingSenderId: "713463510875",
+      appId: "1:713463510875:web:d057a91702ee3d11e88c7e",
+      measurementId: "G-4SDSMBNVGN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ✅ We fetch from appointments (same as your appointment page)
+    const apptCol = collection(db, "appointments");
+
+    const safeText = (x) => (x ?? "").toString();
+    const pad2 = (x) => String(x).padStart(2, "0");
+
+    function toYMD(value) {
+      if (!value) return "";
+      if (typeof value === "object" && value.seconds) {
+        const d = new Date(value.seconds * 1000);
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+      }
+      if (value instanceof Date) {
+        return `${value.getFullYear()}-${pad2(value.getMonth()+1)}-${pad2(value.getDate())}`;
+      }
+      if (typeof value === "string") {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+        const d = new Date(value);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+        }
+      }
+      return "";
+    }
+
+    function formatPrettyDate(value) {
+      const ymd = toYMD(value);
+      if (!ymd) return "—";
+      const d = new Date(ymd + "T00:00:00");
+      return d.toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
+    }
+
+    function getApptDateField(a) {
+      return (
+        a.dateKey ??
+        a.date ??
+        a.appointmentDate ??
+        a.scheduleDate ??
+        a.appDate ??
+        a.appointment_day ??
+        a.moveAt ??
+        null
+      );
+    }
+
+    function getApptTimeField(a) {
+      return (
+        a.time ??
+        a.timeSlot ??
+        a.appointmentTime ??
+        a.scheduleTime ??
+        a.time_range ??
+        "—"
+      );
+    }
+
+    function normalizeAnimals(a){
+      const out = [];
+      const list = a.animalsBreakdown ?? a.animalsList ?? a.animals ?? null;
+
+      if (Array.isArray(list)) {
+        list.forEach(it => {
+          const animal = safeText(it.type ?? it.animal ?? it.name ?? "—");
+          const qty = Number(it.qty ?? it.quantity ?? it.count ?? 0) || 0;
+          if (animal) out.push({ animal, qty });
+        });
+      } else {
+        const s = safeText(a.selectedAnimals ?? "");
+        if (s) {
+          s.split(",").map(x => x.trim()).filter(Boolean).forEach(part => {
+            const m = part.match(/(.+?)\s*x\s*(\d+)/i);
+            if (m) out.push({ animal: m[1].trim(), qty: Number(m[2]) });
+            else out.push({ animal: part, qty: 0 });
+          });
+        }
+      }
+
+      if (!out.length) out.push({ animal:"—", qty:0 });
+      return out;
+    }
+
+    // user dropdown + logout (same behavior)
+    const userChip = document.getElementById("userChip");
+    const userBtn  = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function openUserMenu(open) {
+      userMenu.setAttribute("aria-hidden", String(!open));
+      userChip.setAttribute("aria-expanded", String(open));
+    }
+
+    userBtn.addEventListener("click", () => {
+      const isOpen = userMenu.getAttribute("aria-hidden") === "false";
+      openUserMenu(!isOpen);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!userChip.contains(e.target)) openUserMenu(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") openUserMenu(false);
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) {}
+      window.location.href = "/login.html";
+    });
+
+    const adminNameEl = document.getElementById("adminName");
+    const menuNameEl = document.getElementById("menuName");
+    const menuEmailEl = document.getElementById("menuEmail");
+
+    // ✅ ONLY CHANGED: CONFIRMATION JS (SCREENSHOT STYLE)
+    const confirmOverlay = document.getElementById("confirmOverlay");
+    const confirmBody = document.getElementById("confirmBody");
+    const confirmPrimary = document.getElementById("confirmPrimary");
+    const confirmCancel = document.getElementById("confirmCancel");
+
+    let confirmResolver = null;
+    let confirmType = "Passed"; // "Passed" | "Rejected"
+
+    const PASS_TEXT = `Based on the veterinarian's assessment, the animals are in good health and meets all safety standards. By clicking 'PASSED', this appointment will be moved to the <b>Active Processing Queue</b>.`;
+
+    const REJECT_TEXT = `Based on the veterinarian's assessment, the animal does not meet the health or safety requirements for processing. By clicking 'REJECTED', this appointment will automatically cancelled and the animal must be removed from the premises or moved to the quarantine area immediately.`;
+
+    function openConfirm(type){
+      confirmType = type;
+
+      if (type === "Passed") {
+        confirmBody.innerHTML = PASS_TEXT;
+        confirmPrimary.textContent = "PASSED";
+        confirmPrimary.classList.remove("cBtnReject");
+        confirmPrimary.classList.add("cBtnPass");
+      } else {
+        confirmBody.innerHTML = REJECT_TEXT;
+        confirmPrimary.textContent = "REJECTED";
+        confirmPrimary.classList.remove("cBtnPass");
+        confirmPrimary.classList.add("cBtnReject");
+      }
+
+      confirmOverlay.classList.add("show");
+      confirmOverlay.setAttribute("aria-hidden","false");
+      setTimeout(() => confirmPrimary.focus(), 0);
+
+      return new Promise((resolve) => { confirmResolver = resolve; });
+    }
+
+    function closeConfirm(result){
+      confirmOverlay.classList.remove("show");
+      confirmOverlay.setAttribute("aria-hidden","true");
+      const r = confirmResolver;
+      confirmResolver = null;
+      if (r) r(result);
+    }
+
+    confirmPrimary.addEventListener("click", () => closeConfirm(true));
+    confirmCancel.addEventListener("click", () => closeConfirm(false));
+    confirmOverlay.addEventListener("click", (e) => {
+      if (e.target === confirmOverlay) closeConfirm(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (confirmOverlay.classList.contains("show") && e.key === "Escape") closeConfirm(false);
+    });
+
+    // page state
+    let cachedAppointments = [];
+    let activeFilter = "All"; // All | Passed | Rejected
+
+    const cardsRow = document.getElementById("cardsRow");
+    const emptyMsg = document.getElementById("emptyMsg");
+    const pillRejected = document.getElementById("pillRejected");
+    const pillPassed = document.getElementById("pillPassed");
+
+    function setFilter(next){
+      activeFilter = next;
+
+      pillRejected.classList.toggle("active", activeFilter === "Rejected");
+      pillPassed.classList.toggle("active", activeFilter === "Passed");
+
+      renderCards();
+    }
+
+    pillRejected.addEventListener("click", () => setFilter(activeFilter === "Rejected" ? "All" : "Rejected"));
+    pillPassed.addEventListener("click", () => setFilter(activeFilter === "Passed" ? "All" : "Passed"));
+
+    // search
+    document.getElementById("searchInput").addEventListener("input", () => renderCards());
+
+    function getVetStatus(a){
+      // ✅ store vet result inside appointment doc
+      const v1 = a.vetStatus;
+      const v2 = a.vetInspection?.status;
+      const v3 = a.inspectionStatus;
+      return safeText(v1 ?? v2 ?? v3 ?? ""); // "Passed" / "Rejected" / ""
+    }
+
+    function setVetStatusLocal(docId, status){
+      const idx = cachedAppointments.findIndex(x => x.docId === docId);
+      if (idx !== -1) {
+        cachedAppointments[idx].vetStatus = status;
+      }
+    }
+
+    function buildCard(a){
+      const card = document.createElement("div");
+      card.className = "vetCard";
+
+      const name = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
+      const address = safeText(a.address ?? a.location ?? "—");
+      const number = safeText(a.number ?? a.phone ?? a.contact ?? "—");
+      const datePretty = formatPrettyDate(getApptDateField(a));
+      const time = safeText(getApptTimeField(a));
+
+      const animals = normalizeAnimals(a);
+      const total = animals.reduce((sum, it) => sum + (Number(it.qty)||0), 0);
+
+      const vetStatus = getVetStatus(a).toLowerCase();
+
+      // animals rows html
+      const animalsHtml = animals.map(it => `
+        <div class="animalsRow">
+          <span>${safeText(it.animal)}</span>
+          <span>${Number(it.qty)||0}</span>
+        </div>
+      `).join("");
+
+      card.innerHTML = `
+        <div class="vetCardHead">Vet Inspection</div>
+
+        <div class="vetCardBody">
+          <div class="metaRow"><span class="metaLabel">Name</span><span class="metaValue">${name}</span></div>
+          <div class="metaRow"><span class="metaLabel">Address</span><span class="metaValue">${address}</span></div>
+          <div class="metaRow"><span class="metaLabel">Phone Number</span><span class="metaValue">${number}</span></div>
+          <div class="metaRow"><span class="metaLabel">Date</span><span class="metaValue">${datePretty}</span></div>
+          <div class="metaRow"><span class="metaLabel">Time</span><span class="metaValue">${time}</span></div>
+
+          <div class="animalsBox">
+            <div class="animalsHead"><span>Animals</span><span>QTY</span></div>
+            ${animalsHtml}
+            <div class="animalsDivider"></div>
+            <div class="animalsTotal"><span>Total:</span><span>${total}</span></div>
+          </div>
+
+          <div class="vetActions">
+            <button class="vetBtn btnReject" type="button">REJECTED</button>
+            <button class="vetBtn btnPass" type="button">PASSED</button>
+          </div>
+
+          ${(vetStatus === "passed" || vetStatus === "rejected") ? `
+            <div class="cardStatus ${vetStatus === "passed" ? "statusPassed" : "statusRejected"}">
+              ${vetStatus === "passed" ? "PASSED" : "REJECTED"}
+            </div>
+          ` : ``}
+        </div>
+      `;
+
+      const rejectBtn = card.querySelector(".btnReject");
+      const passBtn = card.querySelector(".btnPass");
+
+      // disable buttons if already decided
+      if (vetStatus === "passed" || vetStatus === "rejected") {
+        rejectBtn.disabled = true;
+        passBtn.disabled = true;
+        rejectBtn.style.opacity = .6;
+        passBtn.style.opacity = .6;
+        rejectBtn.style.cursor = "not-allowed";
+        passBtn.style.cursor = "not-allowed";
+      }
+
+      rejectBtn.addEventListener("click", async () => {
+        const ok = await openConfirm("Rejected");
+        if (!ok) return;
+        await updateVetStatus(a.docId, "Rejected");
+      });
+
+      passBtn.addEventListener("click", async () => {
+        const ok = await openConfirm("Passed");
+        if (!ok) return;
+        await updateVetStatus(a.docId, "Passed");
+      });
+
+      return card;
+    }
+
+    function renderCards(){
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      cardsRow.innerHTML = "";
+
+      let items = [...cachedAppointments];
+
+      // ✅ Only show appointments that are ready for vet inspection:
+      // - hide Cancelled and Completed appointments
+      items = items.filter(a => {
+        const st = safeText(a.status ?? "Pending").toLowerCase();
+        return st !== "cancelled" && st !== "completed";
+      });
+
+      // filter by pill
+      if (activeFilter !== "All") {
+        items = items.filter(a => safeText(getVetStatus(a)).toLowerCase() === activeFilter.toLowerCase());
+      }
+
+      // search match
+      if (q) {
+        items = items.filter(a => {
+          const blob = [
+            a.name, a.fullName, a.customerName,
+            a.address, a.location,
+            a.number, a.phone, a.contact,
+            a.selectedAnimals
+          ].map(safeText).join(" ").toLowerCase();
+          return blob.includes(q);
+        });
+      }
+
+      if (!items.length){
+        emptyMsg.style.display = "";
+        return;
+      }
+      emptyMsg.style.display = "none";
+
+      items.forEach(a => cardsRow.appendChild(buildCard(a)));
+    }
+
+    async function loadAppointments(){
+      let snap = null;
+      try {
+        snap = await getDocs(query(apptCol, orderBy("createdAt","desc"), limit(300)));
+      } catch (e1) {
+        try {
+          snap = await getDocs(query(apptCol, orderBy("moveAt","desc"), limit(300)));
+        } catch (e2) {
+          snap = await getDocs(query(apptCol, limit(300)));
+        }
+      }
+
+      const arr = [];
+      snap.forEach(d => arr.push({ docId: d.id, ...d.data() }));
+
+      // sort by appointment date desc (safe)
+      arr.sort((a,b) => {
+        const da = new Date((toYMD(getApptDateField(a)) || "1970-01-01") + "T00:00:00").getTime();
+        const dbb = new Date((toYMD(getApptDateField(b)) || "1970-01-01") + "T00:00:00").getTime();
+        return dbb - da;
+      });
+
+      cachedAppointments = arr;
+      renderCards();
+    }
+
+    async function updateVetStatus(docId, status){
+      try{
+        // ✅ store inside the appointment document
+        await updateDoc(doc(db, "appointments", docId), {
+          vetStatus: status,
+          vetUpdatedAt: new Date(),
+          vetInspection: { status, updatedAt: new Date() }
+        });
+
+        setVetStatusLocal(docId, status);
+        renderCards();
+      }catch(err){
+        console.error(err);
+        alert("Failed to update vet inspection. Check Firestore rules.");
+      }
+    }
+
+    // auth init
+    let started = false;
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/login.html";
+        return;
+      }
+
+      const name = user.displayName || "Admin";
+      const email = user.email || "admin@email.com";
+      adminNameEl.textContent = name;
+      menuNameEl.textContent = name;
+      menuEmailEl.textContent = email;
+
+      if (started) return;
+      started = true;
+
+      try{
+        await loadAppointments();
+      }catch(err){
+        console.error(err);
+        emptyMsg.textContent = "Error loading vet inspections.";
+        emptyMsg.style.display = "";
+      }
+    });
+  </script>
+</body>
+</html>

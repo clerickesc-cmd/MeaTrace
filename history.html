@@ -1,0 +1,786 @@
+<!-- ✅ history.html (FULL PAGE) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>History</title>
+
+  <!-- ✅ EXACT font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/dashboard.css" />
+
+  <style>
+    /* ✅ Only additions for the screenshot layout (no font change, no rewrite) */
+    .pagePad{ padding: 22px 26px 28px; }
+
+    .h1Title{
+      margin: 8px 0 14px;
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    /* ===== Login History table ===== */
+    .tableCard{
+      background:#cfcfcf;
+      border: 1px solid rgba(0,0,0,.18);
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+      overflow:hidden;
+      border-radius: 12px;
+    }
+    .histTable{ width:100%; border-collapse: collapse; }
+    .histTable thead th{
+      background:#7a0b0b;
+      color:#fff;
+      text-align:left;
+      padding: 12px 14px;
+      font-weight: 500;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .histTable tbody td{
+      background:#cfcfcf;
+      padding: 12px 14px;
+      border-top: 2px solid rgba(0,0,0,.35);
+      font-size: 13px;
+      color:#111;
+      vertical-align: middle;
+    }
+    .rightAlign{ text-align:right; }
+
+    .viewAllWrap{
+      display:flex;
+      justify-content:flex-end;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .viewAllWrap a{
+      color:#111;
+      text-decoration:none;
+      opacity:.9;
+    }
+    .viewAllWrap a:hover{ opacity:1; text-decoration: underline; }
+
+    /* ===== Order History header + tabs ===== */
+    .h2Title{
+      margin: 18px 0 6px;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    .tabs{
+      display:flex;
+      gap: 28px;
+      align-items:flex-end;
+      margin: 4px 0 12px;
+      font-size: 12px;
+    }
+    .tabBtn{
+      border:none;
+      background:transparent;
+      font: inherit;
+      cursor:pointer;
+      padding: 6px 0;
+      opacity:.85;
+    }
+    .tabBtn.active{
+      opacity:1;
+      font-weight: 700;
+      border-bottom: 3px solid #111;
+    }
+
+    /* ===== Order card EXACT style ===== */
+    .orderCard{
+      background:#cfcfcf;
+      border-radius: 12px;
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.18);
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+      margin-bottom: 14px;
+    }
+
+    .orderTop{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      background:#7a0b0b;
+      color:#fff;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .orderTop .tCell{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-right: 1px solid rgba(255,255,255,.45);
+    }
+    .orderTop .tCell:last-child{ border-right:none; }
+
+    .topIco{ width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; }
+    .topIco svg{ width:18px; height:18px; display:block; }
+
+    .orderMid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      background:#cfcfcf;
+    }
+    .mCell{
+      padding: 12px 14px 10px;
+      border-right: 1px solid rgba(0,0,0,.25);
+      min-height: 90px;
+      font-size: 12px;
+      color:#111;
+    }
+    .mCell:last-child{ border-right:none; }
+
+    .receiverGrid{
+      display:grid;
+      grid-template-columns: 86px 1fr;
+      gap: 6px 10px;
+      margin-top: 4px;
+    }
+    .receiverGrid b{ font-weight: 700; }
+    .muted{ opacity:.85; font-weight: 500; }
+
+    .animalsHead{
+      display:grid;
+      grid-template-columns: 1fr 90px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .animalRow{
+      display:grid;
+      grid-template-columns: 1fr 90px;
+      gap: 6px 10px;
+      padding: 2px 0;
+    }
+    .totalRow{
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      border-top: 1px solid rgba(0,0,0,.25);
+      padding-top: 6px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    .orderBottom{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      background:#6a6a6a;
+      color:#111;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .orderBottom .bCell{
+      padding: 10px 14px;
+      text-align:center;
+      border-right: 1px solid rgba(255,255,255,.35);
+    }
+    .orderBottom .bCell:last-child{ border-right:none; }
+
+    @media (max-width: 980px){
+      .tableCard{ overflow:auto; }
+      .histTable{ min-width: 860px; }
+      .orderTop, .orderMid, .orderBottom{ grid-template-columns: 1fr; }
+      .orderTop .tCell, .mCell, .orderBottom .bCell{ border-right:none; }
+      .orderTop .tCell{ border-bottom: 1px solid rgba(255,255,255,.35); }
+      .mCell{ border-bottom: 1px solid rgba(0,0,0,.2); }
+    }
+  </style>
+</head>
+
+<body class="dash-body">
+  <div class="dash">
+
+    <!-- SIDEBAR (same icons as your pages) -->
+    <aside class="dash-sidebar">
+      <div class="dash-logoWrap">
+        <img src="/images/logo.png" class="dash-logo" alt="MeatTrace SCC" />
+      </div>
+
+      <nav class="dash-nav">
+        <a class="dash-link" href="/admin-dashboard.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Dashboard
+        </a>
+
+        <a class="dash-link" href="/appointment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M8 20h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Appointment
+        </a>
+
+        <a class="dash-link" href="/vet-inspection.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Vet Inspection
+        </a>
+
+        <a class="dash-link" href="/payment.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2v20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 6.5c0-2-2-3.5-5-3.5S7 4.5 7 6.5 9 10 12 10s5 1.5 5 3.5S15 17 12 17s-5-1.5-5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Payment
+        </a>
+
+        <a class="dash-link active" href="/user.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          User
+        </a>
+
+        <a class="dash-link" href="/schedule.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Schedule
+        </a>
+
+        <a class="dash-link" href="/notifications.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Content
+        </a>
+
+        <a class="dash-link" href="/setting.html">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M19.4 15a7.7 7.7 0 0 0 .1-2l2-1.5-2-3.5-2.4.8a7.7 7.7 0 0 0-1.7-1L15 2h-6l-.4 2.8a7.7 7.7 0 0 0-1.7 1L4.5 5 2.5 8.5 4.5 10a7.7 7.7 0 0 0 0 4l-2 1.5 2 3.5 2.4-.8a7.7 7.7 0 0 0 1.7 1L9 22h6l.4-2.8a7.7 7.7 0 0 0 1.7-1l2.4.8 2-3.5-2-1.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+      <!-- TOPBAR -->
+      <header class="dash-topbar">
+        <div class="searchbar">
+          <span class="search-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          <input id="searchInput" type="text" placeholder="Search" />
+        </div>
+
+        <div class="top-actions">
+          <button class="iconBtn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="userChip" id="userChip" aria-haspopup="true" aria-expanded="false">
+            <button class="userBtn" id="userBtn" aria-label="Open user menu">
+              <span class="avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span id="adminName">Admin</span>
+              <span class="chev">▾</span>
+            </button>
+
+            <div id="userMenu" class="userMenu" role="menu" aria-hidden="true">
+              <div class="userMenuHead">
+                <div class="uAvatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M4 21c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="uMeta">
+                  <div class="uName" id="menuName">Admin</div>
+                  <div class="uEmail" id="menuEmail">admin@email.com</div>
+                </div>
+              </div>
+
+              <div class="userMenuDivider" role="separator"></div>
+
+              <div class="userMenuFooter">
+                <button id="logoutBtn" class="logoutBtn" type="button">Log out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="pagePad">
+        <h1 class="h1Title">Login History</h1>
+
+        <div class="tableCard">
+          <table class="histTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email/Phone Number</th>
+                <th>Password</th>
+                <th>Status</th>
+                <th class="rightAlign">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="loginBody">
+              <tr><td colspan="5">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="viewAllWrap"><a href="#" id="loginViewAll">View All...</a></div>
+
+        <h2 class="h2Title">Order History</h2>
+
+        <div class="tabs">
+          <button class="tabBtn active" data-filter="all" type="button">All Appointment</button>
+          <button class="tabBtn" data-filter="pending" type="button">Pending</button>
+          <button class="tabBtn" data-filter="completed" type="button">Completed</button>
+          <button class="tabBtn" data-filter="cancelled" type="button">Cancelled</button>
+        </div>
+
+        <div id="ordersWrap"></div>
+        <div class="viewAllWrap"><a href="#" id="orderViewAll">View All...</a></div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      getDoc,
+      doc,
+      query,
+      where,
+      orderBy,
+      limit
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0rJ7-NMwC-qDIziAiaH4AtSOOWQnEiqY",
+      authDomain: "meatrace-7e6f0.firebaseapp.com",
+      projectId: "meatrace-7e6f0",
+      storageBucket: "meatrace-7e6f0.firebasestorage.app",
+      messagingSenderId: "713463510875",
+      appId: "1:713463510875:web:d057a91702ee3d11e88c7e",
+      measurementId: "G-4SDSMBNVGN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const apptCol  = collection(db, "appointments");
+    const loginCol = collection(db, "login_history");
+
+    const safeText = (x) => (x ?? "").toString();
+    const pad2 = (x) => String(x).padStart(2, "0");
+    const norm = (v) => safeText(v).trim().toLowerCase();
+
+    // ===== top-right user menu =====
+    const userChip = document.getElementById("userChip");
+    const userBtn  = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function openUserMenu(open) {
+      userMenu.setAttribute("aria-hidden", String(!open));
+      userChip.setAttribute("aria-expanded", String(open));
+    }
+    userBtn.addEventListener("click", () => {
+      const isOpen = userMenu.getAttribute("aria-hidden") === "false";
+      openUserMenu(!isOpen);
+    });
+    document.addEventListener("click", (e) => {
+      if (!userChip.contains(e.target)) openUserMenu(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") openUserMenu(false);
+    });
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) {}
+      window.location.href = "/login.html";
+    });
+
+    const adminNameEl = document.getElementById("adminName");
+    const menuNameEl = document.getElementById("menuName");
+    const menuEmailEl = document.getElementById("menuEmail");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const name = user.displayName || "Admin";
+        const email = user.email || "admin@email.com";
+        adminNameEl.textContent = name;
+        menuNameEl.textContent = name;
+        menuEmailEl.textContent = email;
+      } else {
+        window.location.href = "/login.html";
+      }
+    });
+
+    // ===== get userId from URL =====
+    const url = new URL(location.href);
+    const userId = url.searchParams.get("userId") || "";
+
+    // ===== helpers =====
+    function prettyDateTime(value){
+      if (!value) return "";
+      let d;
+      if (typeof value === "object" && value.seconds) d = new Date(value.seconds * 1000);
+      else d = new Date(value);
+      if (isNaN(d.getTime())) return "";
+      const mm = pad2(d.getMonth()+1);
+      const dd = pad2(d.getDate());
+      const yyyy = d.getFullYear();
+      const hh = pad2(d.getHours());
+      const mi = pad2(d.getMinutes());
+      return `${mm}/${dd}/${yyyy} ${hh}:${mi}`;
+    }
+
+    function toYMD(value) {
+      if (!value) return "";
+      if (typeof value === "object" && value.seconds) {
+        const d = new Date(value.seconds * 1000);
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+      }
+      if (typeof value === "string") {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+        const d = new Date(value);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+        }
+      }
+      return "";
+    }
+
+    function prettyDateOnly(value){
+      const ymd = toYMD(value);
+      if (!ymd) return "";
+      const d = new Date(ymd + "T00:00:00");
+      return d.toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
+    }
+
+    function normalizeAnimals(a){
+      const raw = a.selectedAnimals ?? a.animals ?? a.animalList ?? a.items ?? null;
+
+      if (Array.isArray(raw)) {
+        return raw.map(it => ({
+          name: safeText(it.animal ?? it.name ?? it.type ?? "—"),
+          qty: Number(it.qty ?? it.quantity ?? it.count ?? 0) || 0
+        })).filter(x => x.name && x.name !== "—");
+      }
+
+      if (raw && typeof raw === "object") {
+        return Object.entries(raw).map(([k,v]) => ({
+          name: safeText(k),
+          qty: Number(v || 0) || 0
+        })).filter(x => x.name);
+      }
+
+      const s = safeText(raw).trim();
+      if (!s) return [];
+      const parts = s.split(",").map(x => x.trim()).filter(Boolean);
+
+      const out = [];
+      for (const p of parts){
+        const m1 = p.match(/^(.+?)\s*[:\-]\s*(\d+)\s*$/);
+        if (m1){ out.push({ name: m1[1].trim(), qty: Number(m1[2]) }); continue; }
+        const m2 = p.match(/^(.+?)\s*\(\s*(\d+)\s*\)\s*$/);
+        if (m2){ out.push({ name: m2[1].trim(), qty: Number(m2[2]) }); continue; }
+        out.push({ name: p, qty: 0 });
+      }
+      return out;
+    }
+
+    function totalQty(list){
+      return list.reduce((s,x)=> s + (Number(x.qty)||0), 0);
+    }
+
+    async function getUserDoc(){
+      if (!userId) return null;
+      const snap = await getDoc(doc(db, "users", userId));
+      return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+    }
+
+    // ===== LOGIN HISTORY =====
+    let loginLimit = 5;
+
+    async function loadLoginHistory(){
+      const tbody = document.getElementById("loginBody");
+      tbody.innerHTML = "";
+
+      if (!userId){
+        tbody.innerHTML = `<tr><td colspan="5">No user selected.</td></tr>`;
+        return;
+      }
+
+      let snap;
+      try{
+        snap = await getDocs(query(loginCol, where("userId","==", userId), orderBy("timestamp","desc"), limit(loginLimit)));
+      }catch(e){
+        snap = await getDocs(query(loginCol, where("userId","==", userId), limit(loginLimit)));
+      }
+
+      const rows = [];
+      snap.forEach(d => rows.push({ id:d.id, ...d.data() }));
+
+      if (rows.length === 0){
+        tbody.innerHTML = `<tr><td colspan="5">No login history found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(r => {
+        const name = safeText(r.name ?? r.fullName ?? "—");
+        const ep = safeText(r.emailOrPhone ?? r.email ?? r.phone ?? "—");
+        const pass = safeText(r.password ?? "—");
+        const status = safeText(r.status ?? "");
+        const ts = prettyDateTime(r.timestamp ?? r.createdAt ?? r.time ?? "");
+        return `
+          <tr>
+            <td>${name}</td>
+            <td>${ep}</td>
+            <td>${pass}</td>
+            <td>${status}</td>
+            <td class="rightAlign">${ts || "—"}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("loginViewAll").addEventListener("click", async (e) => {
+      e.preventDefault();
+      loginLimit = 100;
+      await loadLoginHistory();
+    });
+
+    // ===== ORDER HISTORY =====
+    let ALL_APPTS = [];
+    let filter = "all";
+    let ordersLimit = 2;
+
+    function statusNorm(a){
+      return norm(a.bookingStatus || a.status || "pending");
+    }
+
+    function orderCardHTML(a){
+      const receiver = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
+      const phone = safeText(a.number ?? a.phone ?? a.contact ?? "—");
+      const address = safeText(a.address ?? a.location ?? "—");
+
+      const datePretty = prettyDateOnly(a.date ?? a.appointmentDate ?? a.scheduleDate ?? a.dateKey) || "—";
+      const timeText = safeText(a.time ?? a.timeSlot ?? "—");
+
+      const animals = normalizeAnimals(a);
+      const lines = animals.length
+        ? animals.map(x => `
+            <div class="animalRow">
+              <div>${safeText(x.name)}</div>
+              <div class="rightAlign">${Number(x.qty||0) || ""}</div>
+            </div>
+          `).join("")
+        : `<div class="animalRow"><div>—</div><div class="rightAlign">—</div></div>`;
+
+      const tot = totalQty(animals);
+
+      const st = statusNorm(a);
+      const statusText =
+        st === "completed" ? "APPOINTMENT COMPLETE!" :
+        st === "cancelled" ? "APPOINTMENT CANCELLED!" :
+        "APPOINTMENT PENDING!";
+
+      const leftBottom = `THE ANIMALS ARRIVE ON ${datePretty.toUpperCase()} AT ${timeText}.`;
+
+      return `
+        <div class="orderCard">
+          <div class="orderTop">
+            <div class="tCell">
+              <span class="topIco" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                  <path d="M12 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </span>
+              Delivery Address
+            </div>
+            <div class="tCell">
+              <span class="topIco" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M3 21l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M9 15l10-10c1.3-1.3 3.4.8 2.1 2.1L11 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                  <path d="M8 16l-1-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              Slaughtered Animals
+            </div>
+          </div>
+
+          <div class="orderMid">
+            <div class="mCell">
+              <div class="receiverGrid">
+                <b>Receiver:</b><span>${receiver}</span>
+                <b class="muted"></b><span>${phone}</span>
+                <b class="muted"></b><span>${address}</span>
+              </div>
+            </div>
+
+            <div class="mCell">
+              <div class="animalsHead">
+                <div>Animals</div>
+                <div class="rightAlign">Qty</div>
+              </div>
+              ${lines}
+              <div class="totalRow"><span>Total:</span><span>${tot}</span></div>
+            </div>
+          </div>
+
+          <div class="orderBottom">
+            <div class="bCell">${leftBottom}</div>
+            <div class="bCell">${statusText}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderOrders(){
+      const wrap = document.getElementById("ordersWrap");
+
+      let list = ALL_APPTS.slice();
+      if (filter !== "all") list = list.filter(a => statusNorm(a) === filter);
+
+      list.sort((a,b) => {
+        const aa = a.createdAt?.seconds ? a.createdAt.seconds : (a.createdAt ? new Date(a.createdAt).getTime()/1000 : 0);
+        const bb = b.createdAt?.seconds ? b.createdAt.seconds : (b.createdAt ? new Date(b.createdAt).getTime()/1000 : 0);
+        return bb - aa;
+      });
+
+      const show = list.slice(0, ordersLimit);
+
+      if (show.length === 0){
+        wrap.innerHTML = `<div class="tableCard" style="padding:14px;">No orders found.</div>`;
+        return;
+      }
+
+      wrap.innerHTML = show.map(orderCardHTML).join("");
+    }
+
+    async function loadOrders(){
+      const userDoc = await getUserDoc();
+      let rows = [];
+
+      try{
+        const snap = await getDocs(query(apptCol, where("userId","==", userId)));
+        snap.forEach(d => rows.push({ id:d.id, ...d.data() }));
+      }catch(e){}
+
+      if (rows.length === 0 && userDoc){
+        let snap2;
+        try{
+          snap2 = await getDocs(query(apptCol, orderBy("createdAt","desc"), limit(200)));
+        }catch(e){
+          snap2 = await getDocs(query(apptCol, limit(200)));
+        }
+
+        const uEmail = norm(userDoc.email ?? "");
+        const uPhone = norm(userDoc.phone ?? userDoc.number ?? userDoc.contact ?? "");
+        const uName  = norm(((userDoc.firstName ?? "") + " " + (userDoc.lastName ?? "")).trim());
+
+        snap2.forEach(d => {
+          const a = { id:d.id, ...d.data() };
+          const aEmail = norm(a.email ?? a.customerEmail ?? "");
+          const aPhone = norm(a.phone ?? a.number ?? a.contact ?? "");
+          const aName  = norm(a.name ?? a.fullName ?? a.customerName ?? "");
+
+          const match =
+            (uEmail && aEmail && aEmail === uEmail) ||
+            (uPhone && aPhone && aPhone === uPhone) ||
+            (uName && aName && aName.includes(uName));
+
+          if (match) rows.push(a);
+        });
+      }
+
+      ALL_APPTS = rows;
+      renderOrders();
+    }
+
+    document.querySelectorAll(".tabBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        filter = btn.dataset.filter;
+        renderOrders();
+      });
+    });
+
+    document.getElementById("orderViewAll").addEventListener("click", (e) => {
+      e.preventDefault();
+      ordersLimit = 9999;
+      renderOrders();
+    });
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+
+      document.querySelectorAll("#loginBody tr").forEach(tr => {
+        const txt = tr.innerText.toLowerCase();
+        tr.style.display = txt.includes(q) ? "" : "none";
+      });
+
+      document.querySelectorAll("#ordersWrap .orderCard").forEach(card => {
+        const txt = card.innerText.toLowerCase();
+        card.style.display = txt.includes(q) ? "" : "none";
+      });
+    });
+
+    (async function init(){
+      try{
+        await loadLoginHistory();
+        await loadOrders();
+      }catch(err){
+        console.error(err);
+        document.getElementById("loginBody").innerHTML = `<tr><td colspan="5">Error loading login history.</td></tr>`;
+        document.getElementById("ordersWrap").innerHTML = `<div class="tableCard" style="padding:14px;">Error loading orders.</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
