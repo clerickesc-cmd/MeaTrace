@@ -21,7 +21,6 @@
     }
     .miniLinkBtn:hover{opacity:1;text-decoration:underline;}
 
-    /* schedule cards layout */
     .schedRow { display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; }
     .schedCard {
       background:#d9d9d9;border-radius:10px;padding:10px 12px;min-width:240px;flex:1 1 260px;position:relative;
@@ -33,40 +32,97 @@
     .schedCard .sMeta + .sMeta{margin-top:2px;}
 
     .pageH1{font-size:28px;font-weight:700;margin:8px 0 0;}
-    .sectionH2{font-size:24px;font-weight:700;margin:18px 0 6px;}
+    .sectionH2{font-size:24px;font-weight:700;margin:0;}
 
-    .apptTabs{display:flex;gap:22px;align-items:center;font-size:13px;margin:6px 0 10px;}
-    .apptTab{background:none;border:none;padding:0;cursor:pointer;opacity:.8;font-family:inherit;font-size:13px;}
-    .apptTab.active{opacity:1;font-weight:600;text-decoration:underline;}
+    .apptHeadRow{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin:0 0 8px;
+      flex-wrap:wrap;
+    }
 
-    /* ✅ View all/back beside Cancelled */
-    .apptTabs{ position:relative; }
-    #apptToggleBtn{ margin-left:auto; align-self:center; }
+    .apptTabs{
+      display:flex;
+      gap:22px;
+      align-items:center;
+      font-size:13px;
+      margin:0 0 10px;
+    }
+    .apptTab{
+      background:none;border:none;padding:0;cursor:pointer;opacity:.8;font-family:inherit;font-size:13px;
+    }
+    .apptTab.active{
+      opacity:1;font-weight:600;text-decoration:underline;
+    }
 
     .apptTable tbody tr{transition:background .15s ease; cursor:pointer;}
     .apptTable tbody tr:hover{background:rgba(0,0,0,.04);}
 
     .archBtn{
-      background:#d9d9d9;border:none;border-radius:10px;padding:8px 14px;cursor:pointer;font-family:inherit;
-      display:inline-flex;gap:8px;align-items:center;
+      background:#d9d9d9;
+      border:none;
+      border-radius:999px;
+      padding:6px 12px;
+      cursor:pointer;
+      font-family:inherit;
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      font-size:12px;
+      line-height:1;
+      height:30px;
     }
     .archBtn:hover{filter:brightness(.97);}
 
     .userMenu{z-index:9999;}
 
-    /* modes */
+    .statusSelect{
+      font-family:"Poppins",sans-serif;
+      font-size:12px;
+      font-weight:500;
+      color:#222;
+      width:126px;
+      height:30px;
+      padding:0 34px 0 10px;
+      border:none;
+      border-radius:0;
+      outline:none;
+      cursor:pointer;
+      background-color:#bfbfbf;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'><path d='M5 7.5L10 12.5L15 7.5' stroke='%23222' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat:no-repeat;
+      background-position:right 8px center;
+      background-size:18px 18px;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      appearance:none;
+      box-shadow:none;
+      vertical-align:middle;
+    }
+    .statusSelect:hover{ background-color:#b7b7b7; }
+    .statusSelect:focus{ outline:none; box-shadow:none; }
+    .statusSelect option{
+      font-family:"Poppins",sans-serif;
+      font-size:12px;
+      font-weight:500;
+      color:#333;
+      background:#d9d9d9;
+      padding:8px 10px;
+    }
+
     body.mode-today #todayCards{display:none!important;}
     body.mode-today #appointmentSection{display:none!important;}
-    body.mode-today #archivedBtn{display:none!important;}
+    body.mode-today #appointmentHeaderRow{display:none!important;}
 
     body.mode-all .todayHeaderRow{display:none!important;}
     body.mode-all #todayCards{display:none!important;}
 
-    /* ✅ DETAILS VIEW */
     body.mode-detail .todayHeaderRow,
     body.mode-detail #todayCards,
     body.mode-detail #todayDetailsSection,
-    body.mode-detail #appointmentSection{
+    body.mode-detail #appointmentSection,
+    body.mode-detail #appointmentHeaderRow{
       display:none!important;
     }
     body.mode-detail #detailSection{
@@ -154,7 +210,6 @@
     .pillCancel{ background:#7a0f0f; }
     .pillComplete{ background:#0f6b3a; }
 
-    /* ✅ EXACT status pill (green/red) like your screenshot */
     .statusBannerWrap{
       display:flex;
       justify-content:flex-end;
@@ -164,17 +219,16 @@
     .statusBanner{
       color:#fff;
       border-radius:999px;
-      padding:10px 22px;         /* size */
-      font-size:18px;            /* text size */
+      padding:10px 22px;
+      font-size:18px;
       font-weight:500;
-      min-width: 320px;          /* width like screenshot */
+      min-width: 320px;
       text-align:center;
       line-height:1.2;
     }
     .status-green{ background:#0f6b3a; }
     .status-red{ background:#7a0f0f; }
 
-    /* top-right back in details */
     .topBackBtn{
       display:none;
       border:none;background:transparent;cursor:pointer;font-family:inherit;
@@ -183,7 +237,6 @@
     .topBackBtn:hover{opacity:1;text-decoration:underline;}
     body.mode-detail .topBackBtn{ display:inline-block; }
 
-    /* ✅ CONFIRMATION MODAL */
     .modalOverlay{
       position:fixed; inset:0;
       background:rgba(0,0,0,.45);
@@ -255,13 +308,73 @@
       background:#0f6b3a;
       color:#fff;
     }
+
+    /* ✅ Appointment table scrollable */
+    .scrollTableWrap{
+      max-height:295px;
+      overflow-y:auto;
+      overflow-x:hidden;
+      border-radius:18px;
+    }
+    .scrollTableWrap::-webkit-scrollbar{
+      width:10px;
+    }
+    .scrollTableWrap::-webkit-scrollbar-track{
+      background:#bcbcbc;
+      border-radius:10px;
+    }
+    .scrollTableWrap::-webkit-scrollbar-thumb{
+      background:#8d8d8d;
+      border-radius:10px;
+    }
+
+    .tableCard{
+      border-radius:18px;
+      overflow:hidden;
+      background:#cfcfcf;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+      width:100%;
+    }
+
+    .apptTable{
+      width:100%;
+      border-collapse:collapse;
+      table-layout:fixed;
+    }
+    .apptTable thead th{
+      background:#8b1111;
+      color:#fff;
+      font-size:12px;
+      font-weight:700;
+      padding:12px 10px;
+      text-align:left;
+      white-space:nowrap;
+      position:sticky;
+      top:0;
+      z-index:2;
+    }
+    .apptTable tbody td{
+      font-size:12px;
+      padding:12px 10px;
+      border-top:1px solid rgba(0,0,0,.12);
+      color:#111;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      background:#cfcfcf;
+    }
+    .emptyRow td{ text-align:center; color:#444; }
+
+    @media (max-width: 900px){
+      .apptHeadRow{ gap:8px; }
+      .scrollTableWrap{ max-height:260px; }
+    }
   </style>
 </head>
 
 <body class="dash-body">
   <div class="dash">
 
-    <!-- SIDEBAR -->
     <aside class="dash-sidebar">
       <div class="dash-logoWrap">
         <img src="/images/logo.png" class="dash-logo" alt="MeatTrace SCC" />
@@ -336,7 +449,7 @@
           Schedule
         </a>
 
-        <a class="dash-link" href="/notificationshtml">
+        <a class="dash-link" href="/notifications.html">
           <span class="ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -344,10 +457,10 @@
                 stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             </svg>
           </span>
-          Content
+          Notifications
         </a>
 
-        <a class="dash-link" href="/setting.html">
+        <a class="dash-link" href="/settings.html">
           <span class="ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
@@ -361,9 +474,7 @@
       </nav>
     </aside>
 
-    <!-- MAIN -->
     <main class="dash-main">
-      <!-- TOPBAR -->
       <header class="dash-topbar">
         <div class="searchbar">
           <span class="search-ico" aria-hidden="true">
@@ -421,29 +532,15 @@
         </div>
       </header>
 
-      <!-- TODAY HEADER ROW -->
       <div class="todayHeaderRow" style="display:flex; align-items:center; justify-content:space-between; margin-top: 8px;">
         <div style="display:flex; align-items:baseline; gap:10px;">
           <h1 class="pageH1">Today’ Schedules</h1>
           <button id="todayToggleBtn" class="miniLinkBtn" type="button">View All...</button>
         </div>
-
-        <button id="archivedBtn" class="archBtn" type="button" aria-pressed="false">
-          <span aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M6 7v13h12V7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <path d="M10 11h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M5 4h14l1 3H4l1-3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span id="archivedLabel">Archived</span>
-        </button>
       </div>
 
       <div id="todayCards" class="schedRow" aria-live="polite"></div>
 
-      <!-- TODAY DETAILS -->
       <section id="todayDetailsSection" style="margin-top: 12px; display:none;">
         <h2 class="sectionH2" style="margin:0 0 10px;">Today’s Appointment</h2>
         <div class="tableCard">
@@ -461,35 +558,53 @@
         </div>
       </section>
 
-      <!-- APPOINTMENT SECTION -->
-      <section id="appointmentSection" style="margin-top: 20px;">
-        <h2 id="apptTitle" class="sectionH2" style="margin:0;">Appointment</h2>
+      <div id="appointmentHeaderRow" class="apptHeadRow" style="margin-top:20px;">
+        <h2 id="apptTitle" class="sectionH2">Appointment</h2>
 
+        <button id="archivedBtn" class="archBtn" type="button" aria-pressed="false">
+          <span aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 7v13h12V7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M10 11h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M5 4h14l1 3H4l1-3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span id="archivedLabel">Archived</span>
+        </button>
+      </div>
+
+      <section id="appointmentSection">
         <div id="apptTabsWrap" class="apptTabs" role="tablist" aria-label="Appointment filters">
           <button class="apptTab active" data-filter="All" role="tab" type="button">All Appointment</button>
           <button class="apptTab" data-filter="Pending" role="tab" type="button">Pending</button>
           <button class="apptTab" data-filter="Completed" role="tab" type="button">Completed</button>
           <button class="apptTab" data-filter="Cancelled" role="tab" type="button">Cancelled</button>
-
-          <button id="apptToggleBtn" class="miniLinkBtn" type="button">View All...</button>
         </div>
 
         <div class="tableCard">
-          <table class="apptTable">
-            <thead>
-              <tr>
-                <th>ID No.</th><th>Name</th><th>Address</th><th>Number</th>
-                <th>Date</th><th>Time</th><th>Selected Animals</th><th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="apptBody">
-              <tr class="emptyRow"><td colspan="8">Loading...</td></tr>
-            </tbody>
-          </table>
+          <div class="scrollTableWrap">
+            <table class="apptTable">
+              <thead>
+                <tr>
+                  <th style="width:8%">ID No.</th>
+                  <th style="width:12%">Name</th>
+                  <th style="width:24%">Address</th>
+                  <th style="width:13%">Number</th>
+                  <th style="width:12%">Date</th>
+                  <th style="width:10%">Time</th>
+                  <th style="width:15%">Selected Animals</th>
+                  <th style="width:12%">Status</th>
+                </tr>
+              </thead>
+              <tbody id="apptBody">
+                <tr class="emptyRow"><td colspan="8">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <!-- ✅ DETAILS VIEW -->
       <section id="detailSection">
         <h2 class="sectionH2" style="margin:0 0 10px;">Appointment</h2>
 
@@ -540,12 +655,10 @@
           </div>
         </div>
 
-        <!-- ✅ SHOW THIS AFTER COMPLETED/CANCELLED -->
         <div id="statusBannerWrap" class="statusBannerWrap" style="display:none;">
           <div id="statusBanner" class="statusBanner status-green">Appointment Complete!</div>
         </div>
 
-        <!-- action buttons (hide when completed/cancelled) -->
         <div id="detailActions" class="detailActions">
           <button id="cancelBtn" class="pillBtn pillCancel" type="button">Cancelled</button>
           <button id="completeBtn" class="pillBtn pillComplete" type="button">Completed</button>
@@ -554,7 +667,6 @@
     </main>
   </div>
 
-  <!-- ✅ CONFIRM MODAL (for Cancelled/Completed) -->
   <div id="confirmOverlay" class="modalOverlay" aria-hidden="true">
     <div class="modalBox" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMsg">
       <div class="modalHead">
@@ -601,6 +713,17 @@
 
     const pad2 = (x) => String(x).padStart(2, "0");
     const safeText = (x) => (x ?? "").toString();
+    const norm = (v) => safeText(v).trim().toLowerCase();
+
+    const STATUS_OPTIONS = [
+      "Pending",
+      "Vet Checking",
+      "In Process",
+      "Ready for Pickup",
+      "Payment Pending",
+      "Payment Received",
+      "Done"
+    ];
 
     const todayKey = () => {
       const d = new Date();
@@ -657,7 +780,78 @@
       );
     }
 
-    // profile dropdown + logout
+    function getRealStatus(a) {
+      const bs = norm(a.bookingStatus);
+      if (bs) return bs;
+      return norm(a.status);
+    }
+
+    function getCurrentStatusLabel(a) {
+      return safeText(a.status || "Pending");
+    }
+
+   function isEditableStatus(a) {
+  const st = getRealStatus(a);
+
+  // keep dropdown clickable for all non-final statuses
+  return st !== "completed" && st !== "cancelled";
+}
+
+    function statusCellHTML(a) {
+      const currentLabel = getCurrentStatusLabel(a);
+      if (!isEditableStatus(a)) return `<span>${currentLabel}</span>`;
+
+      return `
+        <select class="statusSelect" data-docid="${a.docId}" aria-label="Status">
+          ${STATUS_OPTIONS.map(opt => `<option value="${opt}" ${opt === currentLabel ? "selected" : ""}>${opt}</option>`).join("")}
+        </select>
+      `;
+    }
+
+    async function updateAppointmentStatus(docId, newStatusLabel){
+      const newNorm = norm(newStatusLabel);
+      await updateDoc(doc(db, "appointments", docId), {
+        status: newStatusLabel,
+        bookingStatus: newNorm,
+        updatedAt: new Date()
+      });
+
+      const idx = cachedAppointments.findIndex(x => x.docId === docId);
+      if (idx !== -1) {
+        cachedAppointments[idx].status = newStatusLabel;
+        cachedAppointments[idx].bookingStatus = newNorm;
+      }
+    }
+
+    function attachStatusDropdownHandlers(scope) {
+      scope.querySelectorAll("select.statusSelect").forEach(sel => {
+        sel.addEventListener("mousedown", (e) => e.stopPropagation());
+        sel.addEventListener("click", (e) => e.stopPropagation());
+        sel.addEventListener("keydown", (e) => e.stopPropagation());
+
+        sel.addEventListener("change", async (e) => {
+          e.stopPropagation();
+          const docId = sel.dataset.docid;
+          const newStatus = sel.value;
+
+          try {
+            await updateAppointmentStatus(docId, newStatus);
+            renderAppointmentTable();
+            renderTodayTable();
+            await loadTodaySchedules();
+
+            if (selectedDocId === docId) {
+              const a = cachedAppointments.find(x => x.docId === docId);
+              if (a) fillDetail(a);
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Failed to update status. Check Firestore rules.");
+          }
+        });
+      });
+    }
+
     const userChip = document.getElementById("userChip");
     const userBtn  = document.getElementById("userBtn");
     const userMenu = document.getElementById("userMenu");
@@ -690,7 +884,6 @@
     const menuNameEl = document.getElementById("menuName");
     const menuEmailEl = document.getElementById("menuEmail");
 
-    // ✅ CONFIRM MODAL LOGIC
     const confirmOverlay = document.getElementById("confirmOverlay");
     const confirmTitle = document.getElementById("confirmTitle");
     const confirmMsg = document.getElementById("confirmMsg");
@@ -711,7 +904,6 @@
       confirmOverlay.classList.add("show");
       confirmOverlay.setAttribute("aria-hidden", "false");
 
-      // focus "Yes" by default like a confirm dialog
       setTimeout(() => confirmYes.focus(), 0);
 
       return new Promise((resolve) => {
@@ -737,38 +929,32 @@
       if (confirmOverlay.classList.contains("show") && e.key === "Escape") closeConfirm(false);
     });
 
-    // state
     let currentFilter = "All";
     let showArchived = false;
     let cachedAppointments = [];
     const DEFAULT_LIMIT = 20;
     let tableLimit = DEFAULT_LIMIT;
 
-    // modes: none | today | all | detail
     let mode = "none";
     let selectedDocId = null;
     let prevMode = "none";
 
-    // elements
     const todayToggleBtn = document.getElementById("todayToggleBtn");
-    const apptToggleBtn = document.getElementById("apptToggleBtn");
     const todayDetailsSection = document.getElementById("todayDetailsSection");
     const topBackBtn = document.getElementById("topBackBtn");
 
-    // banner + actions
     const statusBannerWrap = document.getElementById("statusBannerWrap");
     const statusBanner = document.getElementById("statusBanner");
     const detailActions = document.getElementById("detailActions");
 
-    // archived label
     const archivedBtn = document.getElementById("archivedBtn");
     const archivedLabel = document.getElementById("archivedLabel");
+
     function syncArchivedLabel() {
       archivedLabel.textContent = showArchived ? "Archived (Showing)" : "Archived";
       archivedBtn.setAttribute("aria-pressed", String(showArchived));
     }
 
-    // mode control
     function setMode(next) {
       mode = next;
 
@@ -777,7 +963,6 @@
       document.body.classList.toggle("mode-detail", mode === "detail");
 
       todayToggleBtn.textContent = (mode === "today") ? "Back" : "View All...";
-      apptToggleBtn.textContent  = (mode === "all") ? "Back" : "View All...";
 
       todayDetailsSection.style.display = (mode === "today") ? "" : "none";
 
@@ -792,28 +977,25 @@
         todayDetailsSection.scrollIntoView({ behavior:"smooth", block:"start" });
       }
 
-      if (mode === "all") {
-        tableLimit = 300;
-        renderAppointmentTable();
-        document.getElementById("appointmentSection").scrollIntoView({ behavior:"smooth", block:"start" });
-      }
-
       if (mode === "detail") {
         document.getElementById("detailSection").scrollIntoView({ behavior:"smooth", block:"start" });
       }
     }
 
     todayToggleBtn.addEventListener("click", () => setMode(mode === "today" ? "none" : "today"));
-    apptToggleBtn.addEventListener("click", () => setMode(mode === "all" ? "none" : "all"));
     topBackBtn.addEventListener("click", () => setMode(prevMode || "none"));
 
-    archivedBtn.addEventListener("click", async () => {
+    archivedBtn.addEventListener("click", () => {
       showArchived = !showArchived;
       syncArchivedLabel();
-      await loadTodaySchedules();
+
+      document.querySelectorAll(".apptTab").forEach(b => b.classList.remove("active"));
+      document.querySelector('.apptTab[data-filter="All"]').classList.add("active");
+      currentFilter = "All";
+
+      renderAppointmentTable();
     });
 
-    // render today cards
     function renderTodayCards(items) {
       const wrap = document.getElementById("todayCards");
       wrap.innerHTML = "";
@@ -856,6 +1038,29 @@
       });
     }
 
+    function getFilteredAppointmentsForTable() {
+
+  let rows = [...cachedAppointments];
+
+  // ✅ ARCHIVE MODE
+  if (showArchived) {
+    rows = rows.filter(a => {
+      const st = getRealStatus(a);
+      return st === "completed" || st === "cancelled";
+    });
+  }
+
+  // ✅ NORMAL FILTER TABS
+  if (!showArchived && currentFilter !== "All") {
+    rows = rows.filter(a => {
+      const st = getRealStatus(a);
+      return st === currentFilter.toLowerCase();
+    });
+  }
+
+  return rows;
+}
+
     function buildRowHTML(a){
       const idNo = safeText(a.idNo ?? a.idNumber ?? a.ticketId ?? a.docId);
       const name = safeText(a.name ?? a.fullName ?? a.customerName ?? "—");
@@ -864,7 +1069,7 @@
       const datePretty = formatPrettyDate(getApptDateField(a));
       const time = safeText(getApptTimeField(a));
       const animals = safeText(a.selectedAnimals ?? a.animals ?? "—");
-      const status = safeText(a.status ?? "Pending");
+      const statusCell = statusCellHTML(a);
 
       return `
         <td>${idNo || "—"}</td>
@@ -874,7 +1079,7 @@
         <td>${datePretty || "—"}</td>
         <td>${time}</td>
         <td>${animals}</td>
-        <td>${status}</td>
+        <td>${statusCell}</td>
       `;
     }
 
@@ -882,13 +1087,7 @@
       const tbody = document.getElementById("apptBody");
       tbody.innerHTML = "";
 
-      let rows = [...cachedAppointments];
-
-      if (currentFilter !== "All") {
-        rows = rows.filter(x => safeText(x.status).toLowerCase() === currentFilter.toLowerCase());
-      }
-
-      rows = rows.slice(0, tableLimit);
+      let rows = getFilteredAppointmentsForTable().slice(0, tableLimit);
 
       if (!rows.length) {
         tbody.innerHTML = `<tr class="emptyRow"><td colspan="8">No appointments found.</td></tr>`;
@@ -898,9 +1097,15 @@
       rows.forEach(a => {
         const tr = document.createElement("tr");
         tr.innerHTML = buildRowHTML(a);
-        tr.addEventListener("click", () => { prevMode = mode; openDetail(a.docId); });
+        tr.addEventListener("click", (e) => {
+          if (e.target && e.target.closest && e.target.closest("select.statusSelect")) return;
+          prevMode = mode;
+          openDetail(a.docId);
+        });
         tbody.appendChild(tr);
       });
+
+      attachStatusDropdownHandlers(tbody);
     }
 
     function renderTodayTable() {
@@ -918,12 +1123,17 @@
       rows.forEach(a => {
         const tr = document.createElement("tr");
         tr.innerHTML = buildRowHTML(a);
-        tr.addEventListener("click", () => { prevMode = mode; openDetail(a.docId); });
+        tr.addEventListener("click", (e) => {
+          if (e.target && e.target.closest && e.target.closest("select.statusSelect")) return;
+          prevMode = mode;
+          openDetail(a.docId);
+        });
         tbody.appendChild(tr);
       });
+
+      attachStatusDropdownHandlers(tbody);
     }
 
-    // loaders
     async function loadAppointments() {
       let snap = null;
       try {
@@ -951,43 +1161,28 @@
       renderTodayTable();
     }
 
-  async function loadTodaySchedules() {
-  const tKey = todayKey();
-  let docsArr = [];
+    async function loadTodaySchedules() {
+      const tKey = todayKey();
+      let docsArr = [];
 
-  const norm = (v) => safeText(v).trim().toLowerCase();
+      try {
+        const q1 = query(apptCol, where("dateKey", "==", tKey));
+        const s1 = await getDocs(q1);
+        s1.forEach(d => docsArr.push({ docId: d.id, ...d.data() }));
+      } catch (e) {}
 
-  try {
-    const q1 = query(apptCol, where("dateKey", "==", tKey));
-    const s1 = await getDocs(q1);
-    s1.forEach(d => docsArr.push({ docId: d.id, ...d.data() }));
-  } catch (e) {}
+      if (!docsArr.length) {
+        docsArr = cachedAppointments.filter(a => toYMD(getApptDateField(a)) === tKey);
+      }
 
-  if (!docsArr.length) {
-    docsArr = cachedAppointments.filter(a => toYMD(getApptDateField(a)) === tKey);
-  }
+      docsArr = docsArr.filter(a => {
+        const st = getRealStatus(a);
+        return st === "pending" || st === "in process";
+      });
 
-  // ✅ choose status based on bookingStatus first, fallback to status
-  const getRealStatus = (a) => {
-    const bs = norm(a.bookingStatus);
-    if (bs) return bs;           // bookingStatus controls if present
-    return norm(a.status);
-  };
+      renderTodayCards(docsArr);
+    }
 
-  if (!showArchived) {
-    // Normal mode: show only pending
-    docsArr = docsArr.filter(a => getRealStatus(a) === "pending");
-  } else {
-    // Archived mode: show only completed/cancelled
-    docsArr = docsArr.filter(a => {
-      const st = getRealStatus(a);
-      return st === "completed" || st === "cancelled";
-    });
-  }
-
-  renderTodayCards(docsArr);
-}
-    // tabs
     document.querySelectorAll(".apptTab").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".apptTab").forEach(b => b.classList.remove("active"));
@@ -997,7 +1192,6 @@
       });
     });
 
-    // search (appointments table)
     document.getElementById("searchInput").addEventListener("input", () => {
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
       const rows = document.querySelectorAll("#apptBody tr");
@@ -1007,7 +1201,6 @@
       });
     });
 
-    // details
     const d_name = document.getElementById("d_name");
     const d_number = document.getElementById("d_number");
     const d_address = document.getElementById("d_address");
@@ -1072,7 +1265,6 @@
 
       const st = safeText(a.status).toLowerCase();
 
-      // ✅ show big pill for Completed OR Cancelled, hide buttons
       if (st === "completed") {
         statusBanner.textContent = "Appointment Complete!";
         statusBanner.classList.remove("status-red");
@@ -1090,7 +1282,6 @@
         detailActions.style.display = "";
       }
 
-      // disable buttons if already done
       cancelBtn.disabled = (st === "cancelled" || st === "completed");
       completeBtn.disabled = (st === "completed" || st === "cancelled");
       cancelBtn.style.opacity = cancelBtn.disabled ? .6 : 1;
@@ -1105,37 +1296,36 @@
     }
 
     async function setStatus(newStatus){
-  if (!selectedDocId) return;
+      if (!selectedDocId) return;
 
-  try{
-    const newNorm = safeText(newStatus).trim().toLowerCase(); // completed/cancelled/pending...
+      try{
+        const newNorm = safeText(newStatus).trim().toLowerCase();
 
-    await updateDoc(doc(db, "appointments", selectedDocId), {
-      status: newStatus,                 // "Completed" / "Cancelled"
-      bookingStatus: newNorm,            // "completed" / "cancelled"
-      updatedAt: new Date()
-    });
+        await updateDoc(doc(db, "appointments", selectedDocId), {
+          status: newStatus,
+          bookingStatus: newNorm,
+          updatedAt: new Date()
+        });
 
-    const idx = cachedAppointments.findIndex(x => x.docId === selectedDocId);
-    if (idx !== -1) {
-      cachedAppointments[idx].status = newStatus;
-      cachedAppointments[idx].bookingStatus = newNorm;
+        const idx = cachedAppointments.findIndex(x => x.docId === selectedDocId);
+        if (idx !== -1) {
+          cachedAppointments[idx].status = newStatus;
+          cachedAppointments[idx].bookingStatus = newNorm;
+        }
+
+        renderAppointmentTable();
+        renderTodayTable();
+        await loadTodaySchedules();
+
+        const a = cachedAppointments.find(x => x.docId === selectedDocId);
+        if (a) fillDetail(a);
+
+      }catch(err){
+        console.error(err);
+        alert("Failed to update status. Check Firestore rules.");
+      }
     }
 
-    renderAppointmentTable();
-    renderTodayTable();
-    await loadTodaySchedules();
-
-    const a = cachedAppointments.find(x => x.docId === selectedDocId);
-    if (a) fillDetail(a);
-
-  }catch(err){
-    console.error(err);
-    alert("Failed to update status. Check Firestore rules.");
-  }
-}
-
-    // ✅ confirmation before updating
     cancelBtn.addEventListener("click", async () => {
       if (cancelBtn.disabled) return;
 
@@ -1160,7 +1350,6 @@
       if (ok) setStatus("Completed");
     });
 
-    // ✅ IMPORTANT: init only after auth is ready (prevents infinite Loading)
     let started = false;
     onAuthStateChanged(auth, async (user) => {
       if (!user) {

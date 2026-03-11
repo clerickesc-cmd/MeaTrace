@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#dcdcdc;
+      --sidebar-top:#8d0c0c;
+      --sidebar-bottom:#250000;
+      --text:#111;
+      --white:#fff;
+      --panel:#747474;
+      --panel-light:#d5d3d3;
+      --line:#4d4d4d;
+      --input:#e7e7e7;
+      --muted:#6f6f6f;
+      --icon:#1d1b28;
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html,body{
+      margin:0;
+      width:100%;
+      height:100%;
+      font-family:"Poppins", sans-serif;
+      background:#1b1b1b;
+      color:var(--text);
+    }
+
+    body{
+      display:block;
+    }
+
+    .app{
+      width:100vw;
+      height:100vh;
+      background:var(--bg);
+      display:grid;
+      grid-template-columns:292px 1fr;
+      overflow:hidden;
+      border:none;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+      background:linear-gradient(180deg, var(--sidebar-top) 0%, var(--sidebar-bottom) 100%);
+      padding:16px 18px 18px;
+      position:relative;
+      color:#fff;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .logo-wrap{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin-top:2px;
+      margin-bottom:18px;
+    }
+
+    .logo-wrap img{
+      width:175px;
+      height:auto;
+      object-fit:contain;
+      display:block;
+    }
+
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:8px;
+    }
+
+    .nav a{
+      text-decoration:none;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      padding:12px 18px;
+      border-radius:22px;
+      font-size:18px;
+      font-weight:400;
+      letter-spacing:.1px;
+      transition:.2s ease;
+    }
+
+    .nav a svg{
+      width:28px;
+      height:28px;
+      stroke:#fff;
+      flex:0 0 28px;
+    }
+
+    .nav a:hover{
+      background:rgba(255,255,255,.08);
+    }
+
+    .nav a.active{
+      background:#d9d9d9;
+      color:#111;
+    }
+
+    .nav a.active svg{
+      stroke:#111;
+    }
+
+    /* MAIN */
+    .main{
+      padding:18px 22px 18px 22px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .page-title{
+      font-size:40px;
+      font-weight:700;
+      margin:0 0 16px 0;
+      letter-spacing:.2px;
+    }
+
+    .divider{
+      width:100%;
+      height:1px;
+      background:#e8e8e8;
+      margin-bottom:0;
+    }
+
+    .settings-card{
+  width:calc(100% - 10px);
+  height:617px;
+  margin:18px 0 0 10px;
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  background:var(--panel-light);
+  display:grid;
+  grid-template-rows:48px 1fr;
+}
+
+    .card-header{
+      background:var(--panel);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      font-size:24px;
+      font-weight:700;
+      border-bottom:1.5px solid var(--line);
+    }
+
+    .card-body{
+      display:grid;
+      grid-template-columns:198px 1fr;
+      height:100%;
+    }
+
+    /* LEFT PROFILE PANEL */
+    .profile-side{
+      background:var(--panel);
+      border-right:1.5px solid var(--line);
+      padding:24px 18px 16px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      position:relative;
+    }
+
+    .big-avatar{
+      width:68px;
+      height:68px;
+      margin-top:2px;
+      margin-bottom:10px;
+    }
+
+    .big-avatar svg{
+      width:100%;
+      height:100%;
+      fill:#1d1b28;
+    }
+
+    .admin-name{
+      font-size:20px;
+      line-height:1.05;
+      font-weight:400;
+      color:#fff;
+      margin:2px 0 0 0;
+      text-align:center;
+    }
+
+    .admin-email{
+      font-size:14px;
+      line-height:1.1;
+      color:#fff;
+      opacity:.95;
+      text-align:center;
+      margin-bottom:46px;
+      word-break:break-word;
+    }
+
+    .side-tab{
+      width:140px;
+      height:34px;
+      border:none;
+      border-radius:20px;
+      font-family:"Poppins", sans-serif;
+      font-size:18px;
+      cursor:pointer;
+      margin-bottom:12px;
+      background:#efefef;
+      color:#111;
+    }
+
+    .side-link{
+      font-size:18px;
+      color:#fff;
+      text-decoration:none;
+      line-height:1;
+    }
+
+    .logout-btn{
+      position:absolute;
+      left:50%;
+      bottom:28px;
+      transform:translateX(-50%);
+      width:144px;
+      height:40px;
+      border:none;
+      border-radius:22px;
+      background:#efefef;
+      color:#111;
+      font-size:18px;
+      font-family:"Poppins", sans-serif;
+      cursor:pointer;
+    }
+
+    .form-side{
+  padding:14px 18px 10px 12px;
+  background:var(--panel-light);
+}
+
+    .section-title{
+      font-size:20px;
+      font-weight:700;
+      margin:0 0 18px 0;
+      color:#111;
+    }
+
+    .section-title.login{
+      margin-top:24px;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px 18px;
+      margin-bottom:16px;
+    }
+
+    .field.full{
+      grid-column:1 / -1;
+    }
+
+    .field label{
+      display:block;
+      font-size:14px;
+      font-weight:400;
+      margin-bottom:6px;
+      color:#3c3c3c;
+    }
+
+    .field input{
+      width:100%;
+      height:38px;
+      border:none;
+      outline:none;
+      border-radius:3px;
+      background:var(--input);
+      padding:0 10px;
+      font-family:"Poppins", sans-serif;
+      font-size:14px;
+      color:#555;
+      box-shadow:none;
+    }
+
+    .field input::placeholder{
+      color:#a6a6a6;
+    }
+
+    .password-wrap{
+      position:relative;
+    }
+
+    .password-wrap input{
+      padding-right:38px;
+    }
+
+    .toggle-pass{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      width:18px;
+      height:18px;
+      border:none;
+      background:transparent;
+      cursor:pointer;
+      padding:0;
+      opacity:.7;
+    }
+
+    .toggle-pass svg{
+      width:18px;
+      height:18px;
+      stroke:#a9a9a9;
+      fill:none;
+      stroke-width:1.8;
+    }
+
+    @media (max-width: 1200px){
+      .app{
+        width:100%;
+        height:100vh;
+        min-height:100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo-wrap">
+        <img src="/images/logo.png" alt="MeatTrace SCC Logo">
+      </div>
+
+      <nav class="nav">
+        <a href="/admin-dashboard.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M3 10.5 12 3l9 7.5"></path>
+            <path d="M5 9.8V21h14V9.8"></path>
+            <path d="M9 21v-6h6v6"></path>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="/appointment.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 19V5h6l2 3h8v11H4z"></path>
+            <path d="M10 8V5"></path>
+          </svg>
+          <span>Appointment</span>
+        </a>
+
+        <a href="/vet-inspection.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M21 12a9 9 0 1 1-3.2-6.9"></path>
+            <path d="m9 12 2 2 4-5"></path>
+          </svg>
+          <span>Vet Inspection</span>
+        </a>
+
+        <a href="/payment.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M8 10.5h6a2 2 0 1 0 0-4h-4a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path>
+            <path d="M12 5v14"></path>
+          </svg>
+          <span>Payment</span>
+        </a>
+
+        <a href="/user.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M20 21a8 8 0 0 0-16 0"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>User</span>
+        </a>
+
+        <a href="/schedule.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 7v5l3 3"></path>
+          </svg>
+          <span>Schedule</span>
+        </a>
+
+        <a href="/notifications.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M15 17H5l1.5-1.5V10a5.5 5.5 0 1 1 11 0v5.5L19 17h-4"></path>
+            <path d="M10 20a2 2 0 0 0 4 0"></path>
+          </svg>
+          <span>Notifications</span>
+        </a>
+
+        <a href="/settings.html" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.82-.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2.8a2 2 0 1 1 0-4H2.9A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2.8a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.82.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.24.3.4.65.46 1.02.07.38.12.47.12.68s-.05.3-.12.68c-.06.37-.22.72-.46 1.02Z"></path>
+          </svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="page-title">Settings</div>
+      <div class="divider"></div>
+
+      <section class="settings-card">
+        <div class="card-header">Admin Profile</div>
+
+        <div class="card-body">
+          <!-- LEFT -->
+          <div class="profile-side">
+            <div class="big-avatar">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"></path>
+              </svg>
+            </div>
+
+            <div class="admin-name" id="sideName">Admin</div>
+            <div class="admin-email" id="sideEmail">admin@gmail.com</div>
+
+            <button class="side-tab">Profile</button>
+            <a href="/history.html" class="side-link">Login History</a>
+
+            <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="form-side">
+            <h2 class="section-title">User Information</h2>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="firstName">First Name</label>
+                <input id="firstName" type="text" placeholder="First Name" readonly>
+              </div>
+
+              <div class="field">
+                <label for="lastName">Last Name</label>
+                <input id="lastName" type="text" placeholder="Last Name" readonly>
+              </div>
+
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" placeholder="example123@gmail.com" readonly>
+              </div>
+
+              <div class="field">
+                <label for="phone">Phone Number</label>
+                <input id="phone" type="text" placeholder="Ex. 09123838469" readonly>
+              </div>
+
+              <div class="field full">
+                <label for="address">Address</label>
+                <input id="address" type="text" placeholder="Address" readonly>
+              </div>
+
+              <div class="field">
+                <label for="country">Country</label>
+                <input id="country" type="text" placeholder="Country" readonly>
+              </div>
+
+              <div class="field">
+                <label for="city">City</label>
+                <input id="city" type="text" placeholder="City" readonly>
+              </div>
+            </div>
+
+            <h2 class="section-title login">Login Account</h2>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="username">Username</label>
+                <input id="username" type="text" placeholder="admin123@gmail.com" readonly>
+              </div>
+
+              <div class="field">
+                <label for="password">Password</label>
+                <div class="password-wrap">
+                  <input id="password" type="password" value="12345678" readonly>
+                  <button class="toggle-pass" type="button" id="togglePassword" aria-label="Show Password">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C7 20 2.73 16.89 1 12c.73-2.06 2-3.82 3.56-5.18"></path>
+                      <path d="M10.58 10.58a2 2 0 1 0 2.83 2.83"></path>
+                      <path d="M1 1l22 22"></path>
+                      <path d="M9.88 4.24A10.94 10.94 0 0 1 12 4c5 0 9.27 3.11 11 8a11.82 11.82 0 0 1-4.24 5.19"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // =========================
+    // REPLACE WITH YOUR FIREBASE CONFIG
+    // =========================
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const sideName = document.getElementById("sideName");
+    const sideEmail = document.getElementById("sideEmail");
+
+    const firstName = document.getElementById("firstName");
+    const lastName = document.getElementById("lastName");
+    const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
+    const address = document.getElementById("address");
+    const country = document.getElementById("country");
+    const city = document.getElementById("city");
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    const togglePassword = document.getElementById("togglePassword");
+
+    function splitName(fullName = "") {
+      const cleaned = fullName.trim();
+      if (!cleaned) return { first: "Admin", last: "" };
+
+      const parts = cleaned.split(/\s+/);
+      if (parts.length === 1) return { first: parts[0], last: "" };
+
+      return {
+        first: parts.slice(0, -1).join(" "),
+        last: parts[parts.length - 1]
+      };
+    }
+
+    function setValue(el, value, fallback = "") {
+      el.value = value ?? fallback;
+    }
+
+    function setText(el, value, fallback = "") {
+      if (el) el.textContent = value ?? fallback;
+    }
+
+    async function loadAdminData(user) {
+      const authName = user.displayName || "Admin";
+      const authEmail = user.email || "admin@gmail.com";
+      const nameParts = splitName(authName);
+
+      setText(sideName, authName, "Admin");
+      setText(sideEmail, authEmail, "admin@gmail.com");
+
+      setValue(firstName, nameParts.first, "");
+      setValue(lastName, nameParts.last, "");
+      setValue(email, authEmail, "");
+      setValue(username, authEmail, "");
+      setValue(password, "12345678", "12345678");
+
+      try {
+        // Firestore document path: admins/{uid}
+        const adminRef = doc(db, "admins", user.uid);
+        const adminSnap = await getDoc(adminRef);
+
+        if (adminSnap.exists()) {
+          const data = adminSnap.data();
+
+          setValue(firstName, data.firstName || nameParts.first || "");
+          setValue(lastName, data.lastName || nameParts.last || "");
+          setValue(email, data.email || authEmail || "");
+          setValue(phone, data.phoneNumber || data.phone || "");
+          setValue(address, data.address || "");
+          setValue(country, data.country || "");
+          setValue(city, data.city || "");
+          setValue(username, data.username || data.email || authEmail || "");
+
+          const fullName =
+            data.fullName ||
+            [data.firstName, data.lastName].filter(Boolean).join(" ").trim() ||
+            authName;
+
+          setText(sideName, fullName || "Admin");
+          setText(sideEmail, data.email || authEmail || "admin@gmail.com");
+        } else {
+          setValue(phone, "");
+          setValue(address, "");
+          setValue(country, "");
+          setValue(city, "");
+        }
+      } catch (error) {
+        console.error("Error loading admin profile:", error);
+      }
+    }
+
+    logoutBtn.addEventListener("click", async () => {
+      const confirmLogout = confirm("Are you sure you want to log out?");
+      if (!confirmLogout) return;
+
+      try {
+        await signOut(auth);
+        window.location.href = "/admin-login-form.html";
+      } catch (error) {
+        console.error("Logout error:", error);
+        alert("Failed to log out.");
+      }
+    });
+
+    togglePassword.addEventListener("click", () => {
+      password.type = password.type === "password" ? "text" : "password";
+    });
+  </script>
+</body>
+</html>
